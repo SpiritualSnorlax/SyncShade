@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1032655322576",
+    "project_id": "mrsa-test",
+    "storage_bucket": "mrsa-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032655322576:android:20246d9e29023350a90dd5",
+        "android_client_info": {
+          "package_name": "com.example.mrsa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbF3N6I520M7AQBNcQFlAqqCms3c6yj-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

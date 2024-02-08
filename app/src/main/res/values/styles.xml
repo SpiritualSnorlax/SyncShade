@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyCheckboxStyle">
+        <item name="colorControlNormal">@color/your_unchecked_color</item>
+        <item name="colorAccent">@color/checked_box_color</item>
+    </style>
+</resources>
