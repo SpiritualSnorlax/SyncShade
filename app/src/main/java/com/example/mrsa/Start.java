@@ -48,7 +48,8 @@ public class Start extends AppCompatActivity {
         startSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toSignIn();
+                startActivity(new Intent(Start.this, Login.class));
+                finish();
             }
         });
     }
@@ -57,57 +58,12 @@ public class Start extends AppCompatActivity {
         startSignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toSignUp();
-            }
-        });
-    }
-
-
-    public void toSignIn() {
-
-        Animation rollUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.roll_up);
-        rollUpAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                startActivity(new Intent(Start.this, Login.class));
-                finish();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        gradientBackground.startAnimation(rollUpAnimation);
-    }
-
-    public void toSignUp() {
-
-        Animation rollUpAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.roll_up);
-        rollUpAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
                 startActivity(new Intent(Start.this, Register.class));
                 finish();
             }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
         });
-        gradientBackground.startAnimation(rollUpAnimation);
     }
+
 
     public void startScreenAnimation() {
         Animation fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
