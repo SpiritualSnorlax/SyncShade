@@ -16,9 +16,6 @@
             android:name=".BottomNavigation"
             android:exported="false" />
         <activity
-            android:name=".Logout"
-            android:exported="false" />
-        <activity
             android:name=".Register"
             android:exported="false" />
         <activity

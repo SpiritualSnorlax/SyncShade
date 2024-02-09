@@ -2,11 +2,23 @@ package com.example.mrsa;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +26,7 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class CommandFragment extends Fragment {
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +72,34 @@ public class CommandFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_command, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_command, container, false);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Roller Shade Control");
+
+        Button openBtn = rootView.findViewById(R.id.openBtn);
+        Button closeBtn = rootView.findViewById(R.id.closeBtn);
+
+        openBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myRef.child("App Request").setValue(1);
+                myRef.child("Open-Close Fully").setValue(1);
+                myRef.child("Open-Close Roller Shade").setValue("Opened");
+                Toast.makeText(getActivity(), "Opening", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myRef.child("App Request").setValue(1);
+                myRef.child("Open-Close Fully").setValue(0);
+                myRef.child("Open-Close Roller Shade").setValue("Closed");
+                Toast.makeText(getActivity(), "Closing", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        return rootView;
     }
 }

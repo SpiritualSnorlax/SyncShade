@@ -114,7 +114,7 @@ public class Login extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("Checkbox", MODE_PRIVATE);
         String Checkbox = preferences.getString("remember", "");
         if (Checkbox.equals("true")) {
-            startActivity(new Intent(Login.this, Logout.class));
+            startActivity(new Intent(Login.this, BottomNavigation.class));
 
         }
     }
