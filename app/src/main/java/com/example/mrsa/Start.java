@@ -9,19 +9,29 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Start extends AppCompatActivity {
 
     protected TextView startScreen;
+    protected ImageView rsOpenLogo;
+    protected ImageView rsCloseLogo;
+    private boolean isShowingFirstImage = true;
+    private Handler handler = new Handler();
+    private final int animationDuration = 1000; // Animation duration in milliseconds
+    private final int animationDelay = 3000; // Delay between animations in milliseconds
     protected Button startSignInBtn;
     protected Button startSignUpBtn;
     protected ConstraintLayout gradientBackground;
+
 
 
     @Override
@@ -33,6 +43,8 @@ public class Start extends AppCompatActivity {
 
 
         startScreen = findViewById(R.id.startScreen);
+        rsOpenLogo = findViewById(R.id.rsOpenLogo);
+        rsCloseLogo = findViewById(R.id.rsCloseLogo);
         startSignInBtn = findViewById(R.id.startSignInBtn);
         startSignUpBtn = findViewById(R.id.startSignUpBtn);
         gradientBackground = findViewById(R.id.gradientBackground);
@@ -40,7 +52,8 @@ public class Start extends AppCompatActivity {
 
         startSignInButton();
         startSignUpButton();
-        startScreenAnimation();
+        backgroundAnimation();
+        handler.post(animationRunnable);
 
     }
 
@@ -65,16 +78,52 @@ public class Start extends AppCompatActivity {
     }
 
 
-    public void startScreenAnimation() {
-        Animation fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-        startScreen.startAnimation(fadeInAnimation);
-        startSignInBtn.startAnimation(fadeInAnimation);
-        startSignUpBtn.startAnimation(fadeInAnimation);
-
+    public void backgroundAnimation() {
         AnimationDrawable animationDrawable = (AnimationDrawable) gradientBackground.getBackground();
         animationDrawable.setEnterFadeDuration(625);
         animationDrawable.setExitFadeDuration(1250);
         animationDrawable.start();
+    }
 
+    private Runnable animationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isShowingFirstImage) {
+                // Fade out imageView1
+                fadeOut(rsOpenLogo);
+                // Fade in imageView2 after the fade out animation completes
+                handler.postDelayed(() -> fadeIn(rsCloseLogo), animationDuration);
+            } else {
+                // Fade out imageView2
+                fadeOut(rsCloseLogo);
+                // Fade in imageView1 after the fade out animation completes
+                handler.postDelayed(() -> fadeIn(rsOpenLogo), animationDuration);
+            }
+            // Toggle the flag to alternate between image views
+            isShowingFirstImage = !isShowingFirstImage;
+            // Schedule the next animation loop after a delay
+            handler.postDelayed(this, animationDelay);
+        }
+    };
+
+    private void fadeOut(final ImageView imageView) {
+        AlphaAnimation fadeOutAnimation = new AlphaAnimation(1.0f, 0.0f);
+        fadeOutAnimation.setDuration(animationDuration);
+        fadeOutAnimation.setFillAfter(true); // Ensure the view stays invisible after animation
+        imageView.startAnimation(fadeOutAnimation);
+    }
+
+    private void fadeIn(final ImageView imageView) {
+        AlphaAnimation fadeInAnimation = new AlphaAnimation(0.0f, 1.0f);
+        fadeInAnimation.setDuration(animationDuration);
+        fadeInAnimation.setFillAfter(true); // Ensure the view stays visible after animation
+        imageView.startAnimation(fadeInAnimation);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove callbacks to prevent memory leaks
+        handler.removeCallbacksAndMessages(null);
     }
 }

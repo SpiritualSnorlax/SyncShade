@@ -12,12 +12,12 @@
         android:id="@+id/startScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="268dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="332dp"
         android:fontFamily="serif"
-        android:text="Enabled Roller Shade"
+        android:text="SyncShade"
         android:textColor="@color/white"
-        android:textSize="34sp"
+        android:textSize="48sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,12 +25,12 @@
         android:id="@+id/startSignInBtn"
         android:layout_width="360dp"
         android:layout_height="53dp"
-        android:layout_marginTop="256dp"
+        android:layout_marginTop="188dp"
+        android:backgroundTint="#126A9B"
         android:fontFamily="serif"
         android:text="Sign In"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
-        android:backgroundTint="#126A9B"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,5 +50,27 @@
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/startSignInBtn" />
+
+    <ImageView
+        android:id="@+id/rsOpenLogo"
+        android:layout_width="62dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="332dp"
+        android:layout_marginEnd="40dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/rs_open" />
+
+    <ImageView
+        android:id="@+id/rsCloseLogo"
+        android:layout_width="62dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="332dp"
+        android:layout_marginEnd="40dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/rs_close" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

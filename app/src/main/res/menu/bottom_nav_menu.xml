@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/commandScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Command"
+        android:icon="@drawable/icon_command"/>
+    <item
+        android:id="@+id/statusScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Status"
+        android:icon="@drawable/icon_status"/>
+    <item
+        android:id="@+id/questionScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="FAQs"
+        android:icon="@drawable/icon_faq"/>
+    <item
+        android:id="@+id/accountScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Account"
+        android:icon="@drawable/icon_account"/>
+</menu>
