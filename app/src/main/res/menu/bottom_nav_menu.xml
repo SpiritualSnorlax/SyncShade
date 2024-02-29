@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/commandScreen"
+        android:id="@+id/homeScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Command"
-        android:icon="@drawable/icon_command"/>
+        android:title="Home"
+        android:icon="@drawable/icon_home"/>
     <item
         android:id="@+id/statusScreen"
         android:layout_width="wrap_content"

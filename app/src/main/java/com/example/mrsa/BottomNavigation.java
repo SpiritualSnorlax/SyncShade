@@ -20,14 +20,14 @@ public class BottomNavigation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityBottomNavigationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new CommandFragment());
+        replaceFragment(new HomeFragment());
         EdgeToEdge.enable(this);
 
 
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.commandScreen) {
-                replaceFragment(new CommandFragment());
+            if (item.getItemId() == R.id.homeScreen) {
+                replaceFragment(new HomeFragment());
             } else if (item.getItemId() == R.id.statusScreen) {
                 replaceFragment(new StatusFragment());
             } else if (item.getItemId() == R.id.questionScreen) {
