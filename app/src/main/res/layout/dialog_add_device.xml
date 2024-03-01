@@ -13,17 +13,18 @@
         android:layout_width="0dp"
         android:layout_height="524dp"
         android:layout_marginStart="11dp"
-        android:layout_marginTop="73dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="11dp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/addDeviceTitle"
-            android:layout_width="334dp"
-            android:layout_height="43dp"
+            android:layout_width="313dp"
+            android:layout_height="44dp"
             android:background="#126A9B"
             android:padding="10dp"
             android:text=" Add Device"
@@ -47,8 +48,8 @@
 
         <EditText
             android:id="@+id/deviceIDField"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_width="291dp"
+            android:layout_height="45dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
             android:backgroundTint="#126A9B"
@@ -72,8 +73,8 @@
 
         <EditText
             android:id="@+id/roomNameField"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_width="293dp"
+            android:layout_height="41dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:backgroundTint="#126A9B"
@@ -143,7 +144,7 @@
             android:id="@+id/addBtn"
             android:layout_width="129dp"
             android:layout_height="51dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="4dp"
             android:layout_marginBottom="16dp"
             android:backgroundTint="#126A9B"
             android:text="Add"
@@ -157,7 +158,7 @@
             android:id="@+id/cancelBtn"
             android:layout_width="129dp"
             android:layout_height="51dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="4dp"
             android:layout_marginBottom="16dp"
             android:backgroundTint="#126A9B"
             android:text="Cancel"

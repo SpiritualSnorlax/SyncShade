@@ -8,4 +8,5 @@
     <color name="GREY">#808080</color>
     <color name="RED">#FF0000</color>
     <color name="YELLOWORANGE">#FFAE42</color>
+    <color name="THEMECOLOR">#126A9B</color>
 </resources>
