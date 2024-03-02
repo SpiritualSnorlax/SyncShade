@@ -34,6 +34,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,7 +104,9 @@ public class Register extends AppCompatActivity {
                             if(task.isSuccessful()) {
                                 FirebaseUser currentUser = mAuth.getCurrentUser();
                                 String uid = currentUser.getUid();
+                                String hashedPassword = hashPassword(passwordField);
                                 databaseReference.child("Users").child(uid).child("email").setValue(emailField);
+                                databaseReference.child("Users").child(uid).child("password").setValue(hashedPassword);
                                 databaseReference.child("Users").child(uid).child("phone").setValue(phoneField);
                                 Toast.makeText(Register.this, "Account Creation Successful", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(Register.this, Login.class));
@@ -117,6 +121,23 @@ public class Register extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static boolean isValidPassword(final String password) {

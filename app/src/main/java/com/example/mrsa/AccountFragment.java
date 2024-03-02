@@ -1,16 +1,32 @@
 package com.example.mrsa;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +39,12 @@ public class AccountFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser currentUser = mAuth.getCurrentUser();
+
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mrsa-test-default-rtdb.firebaseio.com/");
+    String uid = currentUser.getUid();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -64,7 +86,30 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_account, container, false);
+        EditText registeredEmail = rootView.findViewById(R.id.registeredEmail);
+        EditText registeredUserID = rootView.findViewById(R.id.registeredUserID);
+        EditText registeredPhone = rootView.findViewById(R.id.registeredPhone);
         Button signOutBtn = rootView.findViewById(R.id.signOutBtn);
+        Button changePasswordBtn = rootView.findViewById(R.id.changePasswordBtn);
+        Button deleteAccountBtn = rootView.findViewById(R.id.deleteAccountBtn);
+
+        databaseReference.child("Users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String email = snapshot.child("email").getValue(String.class);
+                registeredEmail.setText(email);
+
+                registeredUserID.setText(uid);
+
+                String phone = snapshot.child("phone").getValue(String.class);
+                registeredPhone.setText(phone);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +122,88 @@ public class AccountFragment extends Fragment {
                 startActivity(new Intent((getActivity()), Start.class));
             }
         });
+        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changePassword();
+            }
+        });
+        deleteAccountBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteConfirmationDialog();
+            }
+        });
         return rootView;
     }
 
+    private void changePassword() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Change Password")
+                .setMessage("Are you sure you want to change your password?")
+                .setPositiveButton("Change Password", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (currentUser != null) {
+                            databaseReference.child("Users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    String email = snapshot.child("email").getValue(String.class);
+                                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(requireContext(), "Password Reset Email Sent", Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            } else {
+                                                Toast.makeText(requireContext(), "Unable to send reset email", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showDeleteConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Account Deletion")
+                .setMessage("Are you sure you want to delete this account?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (currentUser != null) {
+                            databaseReference.child("Users").child(uid).removeValue();
+                            startActivity(new Intent(getActivity(), Start.class));
+                            currentUser.delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                // User account has been successfully deleted
+                                                Toast.makeText(requireContext(), "Account deleted successfully", Toast.LENGTH_SHORT).show();
+                                                // Optionally, you can navigate the user to another screen or perform other actions
+                                            } else {
+                                                // An error occurred while deleting the user account
+                                                Toast.makeText(requireContext(), "Failed to delete account: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        } else {
+                            // Current user is null, handle this case if needed
+                            Toast.makeText(requireContext(), "No user is currently signed in", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
 }

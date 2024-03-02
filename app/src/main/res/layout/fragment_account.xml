@@ -6,19 +6,136 @@
     android:layout_height="match_parent"
     tools:context=".AccountFragment">
 
-    <Button
-        android:id="@+id/signOutBtn"
-        android:layout_width="150dp"
-        android:layout_height="73dp"
-        android:layout_marginStart="159dp"
-        android:layout_marginTop="336dp"
-        android:layout_marginEnd="161dp"
-        android:text="Sign Out"
-        android:textSize="20sp"
-        android:backgroundTint="#126A9B"
+
+    <View
+        android:id="@+id/container"
+        android:layout_width="431dp"
+        android:layout_height="255dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/THEMECOLOR"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/profileIcon"
+        android:layout_width="123dp"
+        android:layout_height="112dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="144dp"
+        android:src="@drawable/icon_account_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/emailTVAF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="Email:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container" />
+
+    <EditText
+        android:id="@+id/registeredEmail"
+        android:layout_width="373dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:clickable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container" />
+
+    <TextView
+        android:id="@+id/userIDTVAF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="UID:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registeredEmail" />
+
+    <EditText
+        android:id="@+id/registeredUserID"
+        android:layout_width="373dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:clickable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registeredEmail" />
+
+    <TextView
+        android:id="@+id/phoneTVAF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Phone:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registeredUserID" />
+
+    <EditText
+        android:id="@+id/registeredPhone"
+        android:layout_width="373dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
+        android:clickable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registeredUserID" />
+
+    <Button
+        android:id="@+id/signOutBtn"
+        android:layout_width="389dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#126A9B"
+        android:text="Sign Out"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registeredPhone" />
+
+    <Button
+        android:id="@+id/changePasswordBtn"
+        android:layout_width="389dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#126A9B"
+        android:text="Change Password"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signOutBtn" />
+
+    <Button
+        android:id="@+id/deleteAccountBtn"
+        android:layout_width="389dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="@color/GREY"
+        android:text="Delete Account"
+        android:textColor="@color/RED"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/changePasswordBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
