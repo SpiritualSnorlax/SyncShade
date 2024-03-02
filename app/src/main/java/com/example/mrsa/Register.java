@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,8 +50,7 @@ public class Register extends AppCompatActivity {
     protected TextInputEditText etCPassword;
     protected Button signUpBtn;
     protected TextView yesAccountBtn;
-
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mrsa-test-default-rtdb.firebaseio.com/");
 
@@ -100,6 +100,10 @@ public class Register extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()) {
+                                FirebaseUser currentUser = mAuth.getCurrentUser();
+                                String uid = currentUser.getUid();
+                                databaseReference.child("Users").child(uid).child("email").setValue(emailField);
+                                databaseReference.child("Users").child(uid).child("phone").setValue(phoneField);
                                 Toast.makeText(Register.this, "Account Creation Successful", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(Register.this, Login.class));
                                 finish();
@@ -107,19 +111,6 @@ public class Register extends AppCompatActivity {
                             } else {
                                 Toast.makeText(Register.this, "Account Creation Failed", Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    });
-
-                    databaseReference.child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            databaseReference.child("Users").child(mAuth.getCurrentUser().getUid()).child("email").setValue(emailField);
-                            databaseReference.child("Users").child(mAuth.getCurrentUser().getUid()).child("phone").setValue(phoneField);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
                         }
                     });
 
