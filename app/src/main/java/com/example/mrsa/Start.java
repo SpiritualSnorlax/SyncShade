@@ -1,15 +1,20 @@
 package com.example.mrsa;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.AlphaAnimation;
@@ -18,6 +23,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class Start extends AppCompatActivity {
 
@@ -49,13 +58,12 @@ public class Start extends AppCompatActivity {
         startSignUpBtn = findViewById(R.id.startSignUpBtn);
         gradientBackground = findViewById(R.id.gradientBackground);
 
-
         startSignInButton();
         startSignUpButton();
         backgroundAnimation();
         handler.post(animationRunnable);
-
     }
+
 
     public void startSignInButton() {
         startSignInBtn.setOnClickListener(new View.OnClickListener() {

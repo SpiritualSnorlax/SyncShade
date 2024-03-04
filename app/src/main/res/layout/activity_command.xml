@@ -46,13 +46,12 @@
         android:id="@+id/seekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="382dp"
-        android:layout_height="64dp"
+        android:layout_height="0dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="192dp"
-        android:backgroundTint="@color/THEMECOLOR"
+        android:layout_marginTop="269dp"
         android:max="10"
-        android:progress="3"
+        android:progress="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textCommand" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

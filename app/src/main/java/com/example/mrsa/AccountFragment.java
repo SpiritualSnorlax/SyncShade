@@ -29,6 +29,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -174,7 +178,6 @@ public class AccountFragment extends Fragment {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-
     private void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Account Deletion")

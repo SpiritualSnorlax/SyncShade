@@ -1,16 +1,14 @@
 package com.example.mrsa;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -19,13 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -56,13 +48,11 @@ public class HomeFragment extends Fragment {
     protected Button thirdGridBtn;
     protected Button fourthGridBtn;
     int selectedIcon = -1;
-
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mrsa-test-default-rtdb.firebaseio.com/");
-
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = mAuth.getCurrentUser();
-
     String uid = currentUser.getUid();
+    SharedPreferences sharedPreferences;
 
 
 
@@ -108,9 +98,73 @@ public class HomeFragment extends Fragment {
         secondGridBtn = rootView.findViewById(R.id.secondGridBtn);
         thirdGridBtn = rootView.findViewById(R.id.thirdGridBtn);
         fourthGridBtn = rootView.findViewById(R.id.fourthGridBtn);
+        sharedPreferences = getActivity().getSharedPreferences("ButtonVisibility", Context.MODE_PRIVATE);
+
+        restoreButtonVisibility();
+
         addDeviceBtn();
         toCommandScreen();
+
         return rootView;
+    }
+
+    private void setCompoundDrawable(Button button, int selectedIcon) {
+        if (selectedIcon == 1) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_living_room, 0, 0, 0);
+        } else if (selectedIcon == 2) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_bedroom, 0, 0, 0);
+        } else if (selectedIcon == 3) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_kitchen, 0, 0, 0);
+        } else if (selectedIcon == 4) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_bathroom, 0, 0, 0);
+        } else {
+            // Set default compound drawable if no icon is selected
+            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+    }
+
+    private void restoreButtonVisibility() {
+        firstGridBtn.setVisibility(sharedPreferences.getBoolean("firstGridBtn", false) ? View.VISIBLE : View.GONE);
+        firstGridBtn.setText(sharedPreferences.getString("firstGridBtnRoomName", ""));
+        selectedIcon = sharedPreferences.getInt("firstGridBtnIcon", -1);
+        setCompoundDrawable(firstGridBtn, selectedIcon);
+
+        secondGridBtn.setVisibility(sharedPreferences.getBoolean("secondGridBtn", false) ? View.VISIBLE : View.GONE);
+        secondGridBtn.setText(sharedPreferences.getString("secondGridBtnRoomName", ""));
+        selectedIcon = sharedPreferences.getInt("secondGridBtnIcon", -1);
+        setCompoundDrawable(secondGridBtn, selectedIcon);
+
+        thirdGridBtn.setVisibility(sharedPreferences.getBoolean("thirdGridBtn", false) ? View.VISIBLE : View.GONE);
+        thirdGridBtn.setText(sharedPreferences.getString("thirdGridBtnRoomName", ""));
+        selectedIcon = sharedPreferences.getInt("thirdGridBtnIcon", -1);
+        setCompoundDrawable(thirdGridBtn, selectedIcon);
+
+        fourthGridBtn.setVisibility(sharedPreferences.getBoolean("fourthGridBtn", false) ? View.VISIBLE : View.GONE);
+        fourthGridBtn.setText(sharedPreferences.getString("fourthGridBtnRoomName", ""));
+        selectedIcon = sharedPreferences.getInt("fourthGridBtnIcon", -1);
+        setCompoundDrawable(fourthGridBtn, selectedIcon);
+    }
+
+    private void saveButtonVisibility() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean("firstGridBtn", firstGridBtn.getVisibility() == View.VISIBLE);
+        editor.putString("firstGridBtnRoomName", firstGridBtn.getText().toString());
+        editor.putInt("firstGridBtnIcon", selectedIcon);
+
+        editor.putBoolean("secondGridBtn", secondGridBtn.getVisibility() == View.VISIBLE);
+        editor.putString("secondGridBtnRoomName", secondGridBtn.getText().toString());
+        editor.putInt("secondGridBtnIcon", selectedIcon);
+
+        editor.putBoolean("thirdGridBtn", thirdGridBtn.getVisibility() == View.VISIBLE);
+        editor.putString("thirdGridBtnRoomName", thirdGridBtn.getText().toString());
+        editor.putInt("thirdGridBtnIcon", selectedIcon);
+
+        editor.putBoolean("fourthGridBtn", fourthGridBtn.getVisibility() == View.VISIBLE);
+        editor.putString("fourthGridBtnRoomName", fourthGridBtn.getText().toString());
+        editor.putInt("fourthGridBtnIcon", selectedIcon);
+
+        editor.apply();
     }
 
     public void toCommandScreen() {
@@ -185,6 +239,7 @@ public class HomeFragment extends Fragment {
     private void deleteDevice(Button button) {
         // Hide the button
         button.setVisibility(View.GONE);
+        saveButtonVisibility();
 
         if (button == firstGridBtn) {
             databaseReference.child("Users").child(uid).child("Roller Shade Control").removeValue();
@@ -390,6 +445,7 @@ public class HomeFragment extends Fragment {
                                     fourthGridBtn.setVisibility(View.VISIBLE);
                                     dialog.dismiss();
                                 }
+                                saveButtonVisibility();
                             }
                         });
                 cancelBtn.setOnClickListener(new View.OnClickListener() {
