@@ -101,26 +101,10 @@ public class HomeFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("ButtonVisibility", Context.MODE_PRIVATE);
 
         restoreButtonVisibility();
-
         addDeviceBtn();
         toCommandScreen();
 
         return rootView;
-    }
-
-    private void setCompoundDrawable(Button button, int selectedIcon) {
-        if (selectedIcon == 1) {
-            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_living_room, 0, 0, 0);
-        } else if (selectedIcon == 2) {
-            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_bedroom, 0, 0, 0);
-        } else if (selectedIcon == 3) {
-            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_kitchen, 0, 0, 0);
-        } else if (selectedIcon == 4) {
-            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_bathroom, 0, 0, 0);
-        } else {
-            // Set default compound drawable if no icon is selected
-            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-        }
     }
 
     private void restoreButtonVisibility() {
@@ -145,6 +129,21 @@ public class HomeFragment extends Fragment {
         setCompoundDrawable(fourthGridBtn, selectedIcon);
     }
 
+    private void setCompoundDrawable(Button button, int selectedIcon) {
+        if (selectedIcon == 1) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_living_room, 0, 0, 0);
+        } else if (selectedIcon == 2) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_bedroom, 0, 0, 0);
+        } else if (selectedIcon == 3) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_kitchen, 0, 0, 0);
+        } else if (selectedIcon == 4) {
+            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_bathroom, 0, 0, 0);
+        } else {
+            // Set default compound drawable if no icon is selected
+            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+    }
+
     private void saveButtonVisibility() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -165,91 +164,6 @@ public class HomeFragment extends Fragment {
         editor.putInt("fourthGridBtnIcon", selectedIcon);
 
         editor.apply();
-    }
-
-    public void toCommandScreen() {
-        firstGridBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
-            }
-        });
-        firstGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showDeleteConfirmationDialog(firstGridBtn);
-                return true;
-            }
-        });
-        secondGridBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
-            }
-        });
-        secondGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showDeleteConfirmationDialog(secondGridBtn);
-                return true;
-            }
-        });
-        thirdGridBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
-            }
-        });
-        thirdGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showDeleteConfirmationDialog(thirdGridBtn);
-                return true;
-            }
-        });
-        fourthGridBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
-            }
-        });
-        fourthGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showDeleteConfirmationDialog(fourthGridBtn);
-                return true;
-            }
-        });
-    }
-
-    private void showDeleteConfirmationDialog(Button button) {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Delete Device")
-                .setMessage("Are you sure you want to delete this device?")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteDevice(button);
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    private void deleteDevice(Button button) {
-        // Hide the button
-        button.setVisibility(View.GONE);
-        saveButtonVisibility();
-
-        if (button == firstGridBtn) {
-            databaseReference.child("Users").child(uid).child("Roller Shade Control").removeValue();
-        } else if (button == secondGridBtn) {
-            databaseReference.child("Users").child(uid).child("Roller Shade Control 2").removeValue();
-        } else if (button == thirdGridBtn) {
-            databaseReference.child("Users").child(uid).child("Roller Shade Control 3").removeValue();
-        } else if (button == fourthGridBtn) {
-            databaseReference.child("Users").child(uid).child("Roller Shade Control 4").removeValue();
-        }
     }
 
         public void addDeviceBtn() {
@@ -296,7 +210,7 @@ public class HomeFragment extends Fragment {
                             }
                             v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.GREEN)));
                         } else {
-                            selectedIcon = -1; // Reset the selected icon value
+                            //selectedIcon = -1; // Reset the selected icon value
                             v.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
                         }
                     }
@@ -456,5 +370,87 @@ public class HomeFragment extends Fragment {
                         });
             }
         });
+    }
+    private void deleteDevice(Button button) {
+        // Hide the button
+        button.setVisibility(View.GONE);
+        saveButtonVisibility();
+
+        if (button == firstGridBtn) {
+            databaseReference.child("Users").child(uid).child("Roller Shade Control").removeValue();
+        } else if (button == secondGridBtn) {
+            databaseReference.child("Users").child(uid).child("Roller Shade Control 2").removeValue();
+        } else if (button == thirdGridBtn) {
+            databaseReference.child("Users").child(uid).child("Roller Shade Control 3").removeValue();
+        } else if (button == fourthGridBtn) {
+            databaseReference.child("Users").child(uid).child("Roller Shade Control 4").removeValue();
+        }
+    }
+    public void toCommandScreen() {
+        firstGridBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent((getActivity()), Command.class));
+            }
+        });
+        firstGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showDeleteConfirmationDialog(firstGridBtn);
+                return true;
+            }
+        });
+        secondGridBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent((getActivity()), Command.class));
+            }
+        });
+        secondGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showDeleteConfirmationDialog(secondGridBtn);
+                return true;
+            }
+        });
+        thirdGridBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent((getActivity()), Command.class));
+            }
+        });
+        thirdGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showDeleteConfirmationDialog(thirdGridBtn);
+                return true;
+            }
+        });
+        fourthGridBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent((getActivity()), Command.class));
+            }
+        });
+        fourthGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showDeleteConfirmationDialog(fourthGridBtn);
+                return true;
+            }
+        });
+    }
+    private void showDeleteConfirmationDialog(Button button) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Device")
+                .setMessage("Are you sure you want to delete this device?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteDevice(button);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }
