@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+
+import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -100,6 +103,7 @@ public class HomeFragment extends Fragment {
         fourthGridBtn = rootView.findViewById(R.id.fourthGridBtn);
         sharedPreferences = getActivity().getSharedPreferences("ButtonVisibility", Context.MODE_PRIVATE);
 
+
         restoreButtonVisibility();
         addDeviceBtn();
         toCommandScreen();
@@ -164,6 +168,98 @@ public class HomeFragment extends Fragment {
         editor.putInt("fourthGridBtnIcon", selectedIcon);
 
         editor.apply();
+    }
+
+        public void sendCommandDialog() {
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_send_command, null);
+            Button openBtn = dialogView.findViewById(R.id.openBtn);
+            Button closeBtn = dialogView.findViewById(R.id.closeBtn);
+            SeekBar seekBar = dialogView.findViewById(R.id.seekBar);
+            Chip decreaseBtn = dialogView.findViewById(R.id.decreaseBtn);
+            Chip increaseBtn = dialogView.findViewById(R.id.increaseBtn);
+            EditText seekBarValue = dialogView.findViewById(R.id.seekBarValue);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setView(dialogView);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            openBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    databaseReference.child("Users").child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("App Request").setValue(1);
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Fully").setValue(1);
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Roller Shade").setValue("Opened");
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("State").setValue(1);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            });
+
+            closeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    databaseReference.child("Users").child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("App Request").setValue(1);
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Fully").setValue(0);
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Roller Shade").setValue("Closed");
+                            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("State").setValue(0);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+                }
+            });
+
+            decreaseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                seekBar.setProgress(seekBar.getProgress() - 1);
+                seekBarValue.setText(seekBar.getProgress() + "0%");
+                if (seekBar.getProgress() == 0) {
+                    seekBarValue.setText("0%");
+                }
+                readSeekBarValue(seekBarValue);
+                }
+            });
+
+            increaseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    seekBar.setProgress(seekBar.getProgress() + 1);
+                    seekBarValue.setText(seekBar.getProgress() + "0%");
+                    readSeekBarValue(seekBarValue);
+                }
+            });
+        }
+
+    public void readSeekBarValue(EditText seekBarValue) {
+        String text = seekBarValue.getText().toString();
+        double percentage = Double.parseDouble(text.replace("%", "")) / 100.0;
+        double state = percentage;
+
+        if (percentage == 0) {
+            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("App Request").setValue(1);
+            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Fully").setValue(0);
+            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Roller Shade").setValue("Closed");
+        } else {
+            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("App Request").setValue(1);
+            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Fully").setValue(1);
+            databaseReference.child("Users").child(uid).child("Roller Shade Control").child("Open-Close Roller Shade").setValue("Opened");
+        }
+        databaseReference.child("Users").child(uid).child("Roller Shade Control").child("State").setValue(state);
     }
 
         public void addDeviceBtn() {
@@ -390,7 +486,7 @@ public class HomeFragment extends Fragment {
         firstGridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
+                sendCommandDialog();
             }
         });
         firstGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
@@ -403,7 +499,7 @@ public class HomeFragment extends Fragment {
         secondGridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
+                sendCommandDialog();
             }
         });
         secondGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
@@ -416,7 +512,7 @@ public class HomeFragment extends Fragment {
         thirdGridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
+                sendCommandDialog();
             }
         });
         thirdGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
@@ -429,7 +525,7 @@ public class HomeFragment extends Fragment {
         fourthGridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent((getActivity()), Command.class));
+                sendCommandDialog();
             }
         });
         fourthGridBtn.setOnLongClickListener(new View.OnLongClickListener() {
