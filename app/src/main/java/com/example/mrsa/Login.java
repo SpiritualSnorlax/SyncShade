@@ -4,9 +4,15 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SharedMemory;
@@ -140,9 +146,11 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
+                                    makeNotification("Check your email for reset password instructions");
                                     Toast.makeText(Login.this, "Password Reset Email Sent", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 } else {
+                                    makeNotification("Password reset email could not be sent");
                                     Toast.makeText(Login.this, "Unable to send reset email", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -172,5 +180,40 @@ public class Login extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public void makeNotification(String contentText) {
+        String channelID = "CHANNEL_ID_NOTIFICATION";
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(getApplicationContext(), channelID);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("SyncShade")
+                .setContentText(contentText)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Intent intent = new Intent(getApplicationContext(), Login.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("data", "Some value to be passed here");
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                0, intent, PendingIntent.FLAG_MUTABLE);
+        builder.setContentIntent(pendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel =
+                    notificationManager.getNotificationChannel(channelID);
+            if (notificationChannel == null) {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                notificationChannel = new NotificationChannel(channelID,
+                        "Some description", importance);
+                notificationChannel.setLightColor(Color.GREEN);
+                notificationChannel.enableVibration(true);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+        notificationManager.notify(0, builder.build());
     }
 }

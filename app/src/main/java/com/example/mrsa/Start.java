@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,6 +61,7 @@ public class Start extends AppCompatActivity {
         startSignUpBtn = findViewById(R.id.startSignUpBtn);
         gradientBackground = findViewById(R.id.gradientBackground);
 
+        enableNotifications();
         startSignInButton();
         startSignUpButton();
         backgroundAnimation();
@@ -133,5 +137,17 @@ public class Start extends AppCompatActivity {
         super.onDestroy();
         // Remove callbacks to prevent memory leaks
         handler.removeCallbacksAndMessages(null);
+    }
+
+    private void enableNotifications() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(Start.this,
+                    android.Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(Start.this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
     }
 }

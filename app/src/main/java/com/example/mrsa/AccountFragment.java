@@ -1,14 +1,19 @@
 package com.example.mrsa;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -142,7 +147,6 @@ public class AccountFragment extends Fragment {
         });
         return rootView;
     }
-
     private void changePassword() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Change Password")
@@ -159,9 +163,11 @@ public class AccountFragment extends Fragment {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
+                                                makeNotification("Check your email for reset password instructions");
                                                 Toast.makeText(requireContext(), "Password Reset Email Sent", Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                             } else {
+                                                makeNotification("Password reset email could not be sent");
                                                 Toast.makeText(requireContext(), "Unable to send reset email", Toast.LENGTH_SHORT).show();
                                             }
                                         }
@@ -210,5 +216,39 @@ public class AccountFragment extends Fragment {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+    public void makeNotification(String contentText) {
+        String channelID = "CHANNEL_ID_NOTIFICATION";
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(requireContext(), channelID);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("SyncShade")
+                .setContentText(contentText)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Intent intent = new Intent(requireContext(), HomeFragment.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("data", "Some value to be passed here");
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(requireContext(),
+                0, intent, PendingIntent.FLAG_MUTABLE);
+        builder.setContentIntent(pendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel =
+                    notificationManager.getNotificationChannel(channelID);
+            if (notificationChannel == null) {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                notificationChannel = new NotificationChannel(channelID,
+                        "Some description", importance);
+                notificationChannel.setLightColor(Color.GREEN);
+                notificationChannel.enableVibration(true);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+        notificationManager.notify(0, builder.build());
     }
 }
