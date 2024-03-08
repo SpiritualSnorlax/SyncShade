@@ -54,7 +54,7 @@ public class Register extends AppCompatActivity {
     protected TextView yesAccountBtn;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mrsa-test-default-rtdb.firebaseio.com/");
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mrsa-test-services-default-rtdb.firebaseio.com/");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
