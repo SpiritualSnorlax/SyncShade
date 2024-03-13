@@ -22,6 +22,10 @@ public class Status_RecyclerViewAdapter extends RecyclerView.Adapter<Status_Recy
         this.statusModels = statusModels;
     }
 
+    public Status_RecyclerViewAdapter() {
+
+    }
+
     @NonNull
     @Override
     public Status_RecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

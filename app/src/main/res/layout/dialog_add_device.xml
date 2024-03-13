@@ -10,8 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dialogBox"
-        android:layout_width="0dp"
-        android:layout_height="524dp"
+        android:layout_width="311dp"
+        android:layout_height="493dp"
         android:layout_marginStart="11dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="11dp"
@@ -36,30 +36,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/deviceID"
-            android:layout_width="79dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="16dp"
-            android:hint="Device ID:"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addDeviceTitle" />
-
-        <EditText
-            android:id="@+id/deviceIDField"
-            android:layout_width="291dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="#126A9B"
-            android:maxLines="1"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addDeviceTitle" />
-
-        <TextView
             android:id="@+id/roomName"
             android:layout_width="113dp"
             android:layout_height="21dp"
@@ -69,20 +45,19 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/deviceIDField" />
+            app:layout_constraintTop_toBottomOf="@+id/addDeviceTitle" />
 
         <EditText
             android:id="@+id/roomNameField"
             android:layout_width="293dp"
             android:layout_height="41dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
             android:backgroundTint="#126A9B"
             android:maxLines="1"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/deviceIDField" />
+            app:layout_constraintTop_toBottomOf="@+id/roomName" />
 
         <TextView
             android:id="@+id/chooseIcon"
@@ -100,29 +75,29 @@
             android:id="@+id/livingRoomIcon"
             android:layout_width="84dp"
             android:layout_height="89dp"
-            android:layout_marginStart="44dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="168dp"
             android:backgroundTint="#126A9B"
-            app:layout_constraintBottom_toTopOf="@+id/kitchenIcon"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/icon_living_room" />
 
         <ImageButton
             android:id="@+id/bedroomIcon"
             android:layout_width="84dp"
             android:layout_height="89dp"
-            android:layout_marginEnd="44dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="168dp"
+            android:layout_marginEnd="48dp"
             android:backgroundTint="#126A9B"
-            app:layout_constraintBottom_toTopOf="@+id/bathroomIcon"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/icon_bedroom" />
 
         <ImageButton
             android:id="@+id/kitchenIcon"
             android:layout_width="84dp"
             android:layout_height="89dp"
-            android:layout_marginStart="44dp"
+            android:layout_marginStart="48dp"
             android:layout_marginBottom="104dp"
             android:backgroundTint="#126A9B"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -133,7 +108,7 @@
             android:id="@+id/bathroomIcon"
             android:layout_width="84dp"
             android:layout_height="89dp"
-            android:layout_marginEnd="44dp"
+            android:layout_marginEnd="48dp"
             android:layout_marginBottom="104dp"
             android:backgroundTint="#126A9B"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -144,8 +119,8 @@
             android:id="@+id/addBtn"
             android:layout_width="129dp"
             android:layout_height="51dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="20dp"
             android:backgroundTint="#126A9B"
             android:text="Add"
             android:textColor="@color/white"
@@ -158,8 +133,8 @@
             android:id="@+id/cancelBtn"
             android:layout_width="129dp"
             android:layout_height="51dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="20dp"
             android:backgroundTint="#126A9B"
             android:text="Cancel"
             android:textColor="@color/white"

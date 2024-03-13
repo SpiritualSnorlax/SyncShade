@@ -163,11 +163,11 @@ public class AccountFragment extends Fragment {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                makeNotification("Check your email for reset password instructions");
+                                                makeNotification("Check your email for reset password instructions", R.drawable.icon_notification);
                                                 Toast.makeText(requireContext(), "Password Reset Email Sent", Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                             } else {
-                                                makeNotification("Password reset email could not be sent");
+                                                makeNotification("Password reset email could not be sent", R.drawable.icon_notification);
                                                 Toast.makeText(requireContext(), "Unable to send reset email", Toast.LENGTH_SHORT).show();
                                             }
                                         }
@@ -217,11 +217,11 @@ public class AccountFragment extends Fragment {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-    public void makeNotification(String contentText) {
+    public void makeNotification(String contentText, int iconResourceId) {
         String channelID = "CHANNEL_ID_NOTIFICATION";
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(requireContext(), channelID);
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground)
+        builder.setSmallIcon(iconResourceId)
                 .setContentTitle("SyncShade")
                 .setContentText(contentText)
                 .setAutoCancel(true)

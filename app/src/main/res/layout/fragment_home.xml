@@ -20,109 +20,147 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
+    <TextView
+        android:id="@+id/homeScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="56dp"
+        android:fontFamily="sans-serif"
+        android:text="Home Screen - Device Hub"
+        android:textStyle="bold"
+        android:textColor="@color/THEMECOLOR"
+        android:textSize="28sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/firstGridBtn"
-        android:layout_width="184dp"
-        android:layout_height="146dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="216dp"
-        android:backgroundTint="#126A9B"
-        android:drawableLeft="@drawable/icon_bathroom"
-        android:paddingBottom="40dp"
+        android:layout_width="379dp"
+        android:layout_height="111dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button_background"
+        android:drawableRight="@drawable/large_icon_bathroom"
         android:text="Button"
+        android:textAlignment="viewStart"
+        android:textSize="25dp"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/secondGridBtn"
-        android:layout_width="184dp"
-        android:layout_height="146dp"
-        android:layout_marginTop="216dp"
-        android:layout_marginEnd="16dp"
-        android:backgroundTint="#126A9B"
-        android:drawableLeft="@drawable/icon_bathroom"
-        android:paddingBottom="40dp"
-        android:text="Button"
-        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/thirdGridBtn"
-        android:layout_width="184dp"
-        android:layout_height="146dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="132dp"
-        android:backgroundTint="#126A9B"
-        android:drawableLeft="@drawable/icon_bathroom"
-        android:paddingBottom="40dp"
-        android:text="Button"
-        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstGridBtn" />
-
-    <Button
-        android:id="@+id/fourthGridBtn"
-        android:layout_width="184dp"
-        android:layout_height="146dp"
-        android:layout_marginTop="132dp"
-        android:layout_marginEnd="16dp"
-        android:backgroundTint="#126A9B"
-        android:drawableLeft="@drawable/icon_bathroom"
-        android:paddingBottom="40dp"
-        android:text="Button"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/secondGridBtn" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.197" />
 
     <TextView
         android:id="@+id/firstPositionIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="92dp"
         android:text="Position: Closed"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/firstGridBtn"
+        app:layout_constraintEnd_toEndOf="@+id/firstGridBtn"
+        app:layout_constraintHorizontal_bias="0.106"
         app:layout_constraintStart_toStartOf="@+id/firstGridBtn"
-        app:layout_constraintTop_toTopOf="@+id/firstGridBtn" />
+        app:layout_constraintTop_toTopOf="@+id/firstGridBtn"
+        app:layout_constraintVertical_bias="0.809" />
+
+    <Button
+        android:id="@+id/secondGridBtn"
+        android:layout_width="379dp"
+        android:layout_height="111dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button_background"
+        android:drawableRight="@drawable/large_icon_bathroom"
+        android:text="Button"
+        android:textAlignment="viewStart"
+        android:textSize="25dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.42" />
 
     <TextView
         android:id="@+id/secondPositionIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="92dp"
         android:text="Position: Closed"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/secondGridBtn"
+        app:layout_constraintEnd_toEndOf="@+id/secondGridBtn"
+        app:layout_constraintHorizontal_bias="0.106"
         app:layout_constraintStart_toStartOf="@+id/secondGridBtn"
-        app:layout_constraintTop_toTopOf="@+id/secondGridBtn" />
+        app:layout_constraintTop_toTopOf="@+id/secondGridBtn"
+        app:layout_constraintVertical_bias="0.809" />
+
+    <Button
+        android:id="@+id/thirdGridBtn"
+        android:layout_width="379dp"
+        android:layout_height="111dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button_background"
+        android:drawableRight="@drawable/large_icon_bathroom"
+        android:text="Button"
+        android:textAlignment="viewStart"
+        android:textSize="25dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.646" />
 
     <TextView
         android:id="@+id/thirdPositionIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="92dp"
         android:text="Position: Closed"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/thirdGridBtn"
+        app:layout_constraintEnd_toEndOf="@+id/thirdGridBtn"
+        app:layout_constraintHorizontal_bias="0.106"
         app:layout_constraintStart_toStartOf="@+id/thirdGridBtn"
-        app:layout_constraintTop_toTopOf="@+id/thirdGridBtn" />
+        app:layout_constraintTop_toTopOf="@+id/thirdGridBtn"
+        app:layout_constraintVertical_bias="0.809" />
+
+    <Button
+        android:id="@+id/fourthGridBtn"
+        android:layout_width="379dp"
+        android:layout_height="111dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_button_background"
+        android:drawableRight="@drawable/large_icon_bathroom"
+        android:text="Button"
+        android:textAlignment="viewStart"
+        android:textSize="25dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.87" />
 
     <TextView
         android:id="@+id/fourthPositionIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="92dp"
         android:text="Position: Closed"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/fourthGridBtn"
+        app:layout_constraintEnd_toEndOf="@+id/fourthGridBtn"
+        app:layout_constraintHorizontal_bias="0.106"
         app:layout_constraintStart_toStartOf="@+id/fourthGridBtn"
-        app:layout_constraintTop_toTopOf="@+id/fourthGridBtn" />
+        app:layout_constraintTop_toTopOf="@+id/fourthGridBtn"
+        app:layout_constraintVertical_bias="0.809" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

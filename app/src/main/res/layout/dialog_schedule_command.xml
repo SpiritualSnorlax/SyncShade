@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialogScheduleCommand"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:padding="20dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialogBox"
+        android:layout_width="311dp"
+        android:layout_height="343dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="11dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/scheduleCommandTitle"
+            android:layout_width="313dp"
+            android:layout_height="44dp"
+            android:background="#126A9B"
+            android:padding="10dp"
+            android:text="Schedule Command"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scheduleCommandTitle"
+            app:layout_constraintVertical_bias="0.0">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMonday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="M"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipTuesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="T"
+                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipWednesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="W"
+                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipThursday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="T"
+                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipFriday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="F"
+                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <Button
+            android:id="@+id/chooseTime"
+            android:layout_width="169dp"
+            android:layout_height="47dp"
+            android:layout_marginBottom="112dp"
+            android:text="Choose Time"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

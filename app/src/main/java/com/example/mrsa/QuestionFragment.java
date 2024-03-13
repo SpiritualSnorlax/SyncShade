@@ -7,6 +7,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +63,27 @@ public class QuestionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_question, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_question, container, false);
+        TextView faqAddDevice = rootView.findViewById(R.id.faqAddDevice);
+        TextView faqAddDeviceInfo = rootView.findViewById(R.id.faqAddDeviceInfo);
+
+        dropDownMenu(faqAddDevice, faqAddDeviceInfo);
+
+        return rootView;
+    }
+
+    public void dropDownMenu(TextView summary, TextView details) {
+        summary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (details.getVisibility() == View.GONE) {
+                    details.setVisibility(View.VISIBLE);
+                    summary.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_drop_down, 0, 0, 0);
+                } else {
+                    details.setVisibility(View.GONE);
+                    summary.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_drop_up, 0, 0, 0);
+                }
+            }
+        });
     }
 }
