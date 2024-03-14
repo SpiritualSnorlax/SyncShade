@@ -6,4 +6,89 @@
     android:layout_height="match_parent"
     tools:context=".Scheduler">
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroup"
+        android:layout_width="397dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="92dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSunday"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/THEMECOLOR"
+            android:textColor="@color/white"
+            android:text="S" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipMonday"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/THEMECOLOR"
+            android:textColor="@color/white"
+            android:text="M" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipTuesday"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/THEMECOLOR"
+            android:textColor="@color/white"
+            android:text="T" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipWednesday"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/THEMECOLOR"
+            android:textColor="@color/white"
+            android:text="W" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipThursday"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/THEMECOLOR"
+            android:textColor="@color/white"
+            android:text="T" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFriday"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/THEMECOLOR"
+            android:textColor="@color/white"
+            android:text="F" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSaturday"
+            style="@style/Widget.Material3.Chip.Filter.Elevated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/THEMECOLOR"
+            android:textColor="@color/white"
+            android:text="S" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <Button
+        android:id="@+id/chooseTime"
+        android:layout_width="169dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="112dp"
+        android:text="Choose Time"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

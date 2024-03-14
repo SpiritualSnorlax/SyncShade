@@ -8,11 +8,11 @@
         android:title="Home"
         android:icon="@drawable/icon_home"/>
     <item
-        android:id="@+id/statusScreen"
+        android:id="@+id/scheduleScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Status"
-        android:icon="@drawable/icon_status"/>
+        android:title="Schedule"
+        android:icon="@drawable/icon_schedule"/>
     <item
         android:id="@+id/questionScreen"
         android:layout_width="wrap_content"

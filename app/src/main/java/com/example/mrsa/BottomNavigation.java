@@ -28,8 +28,8 @@ public class BottomNavigation extends AppCompatActivity {
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.homeScreen) {
                 replaceFragment(new HomeFragment());
-            } else if (item.getItemId() == R.id.statusScreen) {
-                replaceFragment(new StatusFragment());
+            } else if (item.getItemId() == R.id.scheduleScreen) {
+                replaceFragment(new ScheduleFragment());
             } else if (item.getItemId() == R.id.questionScreen) {
                 replaceFragment(new QuestionFragment());
             } else if (item.getItemId() == R.id.accountScreen)

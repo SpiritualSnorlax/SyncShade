@@ -10,8 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dialogBox"
-        android:layout_width="311dp"
-        android:layout_height="343dp"
+        android:layout_width="293dp"
+        android:layout_height="603dp"
         android:layout_marginStart="11dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="11dp"
@@ -49,38 +49,38 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipMonday"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="M"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"/>
+                android:text="M" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipTuesday"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="T"
-                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+                android:text="T" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipWednesday"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="W"
-                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+                android:text="W" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipThursday"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="T"
-                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+                android:text="T" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipFriday"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="F"
-                style="@style/Widget.Material3.Chip.Filter.Elevated" />
+                android:text="F" />
         </com.google.android.material.chip.ChipGroup>
 
         <Button
