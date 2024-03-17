@@ -17,11 +17,16 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +37,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -112,14 +119,10 @@ public class ScheduleFragment extends Fragment {
         firstScheduleBtn = rootView.findViewById(R.id.firstScheduleBtn);
         secondScheduleBtn = rootView.findViewById(R.id.secondScheduleBtn);
         thirdScheduleBtn = rootView.findViewById(R.id.thirdScheduleBtn);
-        fourthScheduleBtn = rootView.findViewById(R.id.fourthScheduleBtn);
-        fifthScheduleBtn = rootView.findViewById(R.id.fifthScheduleBtn);
 
         firstScheduleSwitch = rootView.findViewById(R.id.firstScheduleSwitch);
         secondScheduleSwitch = rootView.findViewById(R.id.secondScheduleSwitch);
         thirdScheduleSwitch = rootView.findViewById(R.id.thirdScheduleSwitch);
-        fourthScheduleSwitch = rootView.findViewById(R.id.fourthScheduleSwitch);
-        fifthScheduleSwitch = rootView.findViewById(R.id.fifthScheduleSwitch);
 
         daysOfWeek = rootView.findViewById(R.id.daysOfWeek);
 
@@ -154,7 +157,16 @@ public class ScheduleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 View dialogView = getLayoutInflater().inflate(R.layout.dialog_schedule_command, null);
-                ChipGroup chipGroup  = dialogView.findViewById(R.id.chipGroup);
+                Chip chipOpenFully = dialogView.findViewById(R.id.chipOpenFully);
+                Chip chipCloseFully = dialogView.findViewById(R.id.chipCloseFully);
+                ChipGroup chipGroupDays  = dialogView.findViewById(R.id.chipGroupDays);
+                Chip chipSunday = dialogView.findViewById(R.id.chipSunday);
+                Chip chipMonday = dialogView.findViewById(R.id.chipMonday);
+                Chip chipTuesday = dialogView.findViewById(R.id.chipTuesday);
+                Chip chipWednesday = dialogView.findViewById(R.id.chipWednesday);
+                Chip chipThursday = dialogView.findViewById(R.id.chipThursday);
+                Chip chipFriday = dialogView.findViewById(R.id.chipFriday);
+                Chip chipSaturday = dialogView.findViewById(R.id.chipSaturday);
                 Button chooseTime = dialogView.findViewById(R.id.chooseTime);
                 Button confirmScheduleBtn = dialogView.findViewById(R.id.confirmScheduleBtn);
                 Button cancelScheduleBtn = dialogView.findViewById(R.id.cancelScheduleBtn);
@@ -163,6 +175,73 @@ public class ScheduleFragment extends Fragment {
                 builder.setView(dialogView);
                 AlertDialog dialog = builder.create();
                 dialog.show();
+
+                chipOpenFully.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            // ChipOpenFully is checked, set its background color to GREEN
+                            chipOpenFully.setChipBackgroundColorResource(R.color.GREEN);
+                            // Uncheck ChipCloseFully if it is checked
+                            chipCloseFully.setChecked(false);
+                            // Set its background color back to THEMECOLOR
+                            chipCloseFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        } else {
+                            // ChipOpenFully is unchecked, set its background color back to THEMECOLOR
+                            chipOpenFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        }
+                    }
+                });
+
+                chipCloseFully.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            // ChipCloseFully is checked, set its background color to GREEN
+                            chipCloseFully.setChipBackgroundColorResource(R.color.GREEN);
+                            // Uncheck ChipOpenFully if it is checked
+                            chipOpenFully.setChecked(false);
+                            // Set its background color back to THEMECOLOR
+                            chipOpenFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        } else {
+                            // ChipCloseFully is unchecked, set its background color back to THEMECOLOR
+                            chipCloseFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        }
+                    }
+                });
+
+                chipGroupDays.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+                    @Override
+                    public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+
+                        chipSunday.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        chipMonday.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        chipTuesday.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        chipWednesday.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        chipThursday.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        chipFriday.setChipBackgroundColorResource(R.color.THEMECOLOR);
+                        chipSaturday.setChipBackgroundColorResource(R.color.THEMECOLOR);
+
+                        for (int checkedId : chipGroupDays.getCheckedChipIds()) {
+
+                            if (checkedId == R.id.chipSunday) {
+                                chipSunday.setChipBackgroundColorResource(R.color.GREEN);
+                            } else if(checkedId == R.id.chipMonday) {
+                                chipMonday.setChipBackgroundColorResource(R.color.GREEN);
+                            } else if (checkedId == R.id.chipTuesday) {
+                                chipTuesday.setChipBackgroundColorResource(R.color.GREEN);
+                            } else if (checkedId == R.id.chipWednesday) {
+                                chipWednesday.setChipBackgroundColorResource(R.color.GREEN);
+                            } else if (checkedId == R.id.chipThursday) {
+                                chipThursday.setChipBackgroundColorResource(R.color.GREEN);
+                            } else if (checkedId == R.id.chipFriday) {
+                                chipFriday.setChipBackgroundColorResource(R.color.GREEN);
+                            } else if (checkedId == R.id.chipSaturday) {
+                                chipSaturday.setChipBackgroundColorResource(R.color.GREEN);
+                            }
+                        }
+                    }
+                });
 
                 chooseTime.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -173,7 +252,7 @@ public class ScheduleFragment extends Fragment {
                                 selectedHour = hourOfDay;
                                 selectedMinute = minute;
 
-                                for (int checkedId : chipGroup.getCheckedChipIds()) {
+                                for (int checkedId : chipGroupDays.getCheckedChipIds()) {
 
                                     if (checkedId == R.id.chipSunday) {
                                         scheduleTask(Calendar.SUNDAY, hourOfDay, minute);
@@ -223,7 +302,7 @@ public class ScheduleFragment extends Fragment {
                         SpannableString spannableString = new SpannableString(daysOfWeekText);
                         int color = Color.GREEN;
 
-                        for (int checkedId : chipGroup.getCheckedChipIds()) {
+                        for (int checkedId : chipGroupDays.getCheckedChipIds()) {
                             int start = 0;
                             int end = 0;
 

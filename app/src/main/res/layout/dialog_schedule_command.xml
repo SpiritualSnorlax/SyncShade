@@ -9,69 +9,126 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="275dp"
-        android:layout_height="325dp"
+        android:layout_width="312dp"
+        android:layout_height="434dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/scheduleCommandTitle"
+            android:layout_width="313dp"
+            android:layout_height="44dp"
+            android:background="#126A9B"
+            android:padding="10dp"
+            android:text="Schedule Command"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/chooseCommandTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            android:text="Choose Command:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scheduleCommandTitle" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipOpenFully"
+            style="@style/CustomChip"
+            app:chipBackgroundColor="@color/THEMECOLOR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="40dp"
+            android:text="Open - Fully"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scheduleCommandTitle" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCloseFully"
+            style="@style/CustomChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="16dp"
+            android:text="Close - Fully"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scheduleCommandTitle" />
+
+        <TextView
+            android:id="@+id/chooseDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="96dp"
+            android:text="Choose Days:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scheduleCommandTitle" />
+
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroup"
-            android:layout_width="256dp"
-            android:layout_height="113dp"
+            android:id="@+id/chipGroupDays"
+            android:layout_width="310dp"
+            android:layout_height="114dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.067">
+            app:layout_constraintVertical_bias="0.501">
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipSunday"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                style="@style/CustomChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:text="S" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipMonday"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                style="@style/CustomChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="M" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipTuesday"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                style="@style/CustomChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipWednesday"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                style="@style/CustomChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="W" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipThursday"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                style="@style/CustomChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="T" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipFriday"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                style="@style/CustomChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="F" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipSaturday"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                style="@style/CustomChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="S" />
@@ -79,20 +136,23 @@
 
         <Button
             android:id="@+id/chooseTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="233dp"
+            android:layout_height="45dp"
             android:text="Choose Time"
+            android:backgroundTint="@color/THEMECOLOR"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.742" />
 
         <Button
             android:id="@+id/confirmScheduleBtn"
             android:layout_width="122dp"
             android:layout_height="52dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="52dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/THEMECOLOR"
             android:text="Add"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -102,12 +162,13 @@
             android:id="@+id/cancelScheduleBtn"
             android:layout_width="122dp"
             android:layout_height="52dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="52dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/THEMECOLOR"
             android:text="Cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

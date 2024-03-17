@@ -34,22 +34,22 @@
 
     <Button
         android:id="@+id/firstScheduleBtn"
-        android:layout_width="377dp"
-        android:layout_height="82dp"
+        android:layout_width="381dp"
+        android:layout_height="102dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/rounded_button_background"
         android:text="0:00 a.m."
         android:textAlignment="viewStart"
-        android:textSize="25dp"
         android:textColor="@color/white"
+        android:textSize="25dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.160" />
+        app:layout_constraintVertical_bias="0.222" />
 
     <Switch
         android:id="@+id/firstScheduleSwitch"
@@ -73,8 +73,8 @@
 
     <Button
         android:id="@+id/secondScheduleBtn"
-        android:layout_width="377dp"
-        android:layout_height="82dp"
+        android:layout_width="381dp"
+        android:layout_height="102dp"
         android:background="@drawable/rounded_button_background"
         android:text="0:00 a.m."
         android:textAlignment="viewStart"
@@ -84,7 +84,7 @@
         app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.340" />
+        app:layout_constraintVertical_bias="0.426" />
 
     <Switch
         android:id="@+id/secondScheduleSwitch"
@@ -99,8 +99,8 @@
 
     <Button
         android:id="@+id/thirdScheduleBtn"
-        android:layout_width="377dp"
-        android:layout_height="82dp"
+        android:layout_width="381dp"
+        android:layout_height="102dp"
         android:background="@drawable/rounded_button_background"
         android:text="0:00 a.m."
         android:textAlignment="viewStart"
@@ -110,7 +110,7 @@
         app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.510" />
+        app:layout_constraintVertical_bias="0.617" />
 
     <Switch
         android:id="@+id/thirdScheduleSwitch"
@@ -123,57 +123,18 @@
         app:layout_constraintTop_toTopOf="@+id/thirdScheduleBtn"
         app:layout_constraintVertical_bias="0.527" />
 
-    <Button
-        android:id="@+id/fourthScheduleBtn"
-        android:layout_width="377dp"
-        android:layout_height="82dp"
-        android:background="@drawable/rounded_button_background"
-        android:text="0:00 a.m."
-        android:textAlignment="viewStart"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.680" />
-
-    <Switch
-        android:id="@+id/fourthScheduleSwitch"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="S M T W T F S"
+        android:layout_marginStart="24dp"
+        android:text="Command:"
+        android:textStyle="bold"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/fourthScheduleBtn"
-        app:layout_constraintEnd_toEndOf="@+id/fourthScheduleBtn"
-        app:layout_constraintTop_toTopOf="@+id/fourthScheduleBtn"
-        app:layout_constraintVertical_bias="0.527" />
-
-    <Button
-        android:id="@+id/fifthScheduleBtn"
-        android:layout_width="377dp"
-        android:layout_height="82dp"
-        android:background="@drawable/rounded_button_background"
-        android:text="0:00 a.m."
-        android:textAlignment="viewStart"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.850" />
-
-    <Switch
-        android:id="@+id/fifthScheduleSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="S M T W T F S"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/fifthScheduleBtn"
-        app:layout_constraintEnd_toEndOf="@+id/fifthScheduleBtn"
-        app:layout_constraintTop_toTopOf="@+id/fifthScheduleBtn"
-        app:layout_constraintVertical_bias="0.527" />
+        app:layout_constraintBottom_toBottomOf="@+id/firstScheduleBtn"
+        app:layout_constraintStart_toStartOf="@+id/firstScheduleBtn"
+        app:layout_constraintTop_toTopOf="@+id/firstScheduleBtn"
+        app:layout_constraintVertical_bias="0.879" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

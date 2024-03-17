@@ -2,25 +2,4 @@
     <string name="app_name">SyncShade</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string-array name="device_names">
-        <item>Living Room</item>
-        <item>Bedroom</item>
-        <item>Kitchen</item>
-        <item>Bathroom</item>
-    </string-array>
-
-    <string-array name="operation_performed">
-        <item>Open</item>
-        <item>Close</item>
-        <item>Open-10</item>
-        <item>Close-10</item>
-    </string-array>
-
-    <string-array name="operation_time">
-        <item>3:00 AM</item>
-        <item>6:00 PM</item>
-        <item>9:00 AM</item>
-        <item>12:00 PM</item>
-    </string-array>
 </resources>
