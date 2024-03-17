@@ -4,4 +4,14 @@
         <item name="colorControlNormal">@color/your_unchecked_color</item>
         <item name="colorAccent">@color/checked_box_color</item>
     </style>
+
+    <style name="CustomChip" parent="Widget.Material3.Chip.Filter.Elevated">
+        <item name="chipIconVisible">false</item>
+        <!-- Add any other custom attributes you want to change -->
+    </style>
+
+    <style name="mySwitch">
+        <item name="android:colorControlActivated">@color/GREEN</item>
+    </style>
+
 </resources>

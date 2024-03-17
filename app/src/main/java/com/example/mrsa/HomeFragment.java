@@ -137,10 +137,12 @@ public class HomeFragment extends Fragment {
         secondPositionIndicator = rootView.findViewById(R.id.secondPositionIndicator);
         thirdPositionIndicator = rootView.findViewById(R.id.thirdPositionIndicator);
         fourthPositionIndicator = rootView.findViewById(R.id.fourthPositionIndicator);
-        sharedPreferences = getActivity().getSharedPreferences("ButtonVisibility", Context.MODE_PRIVATE);
 
-        //restoreButtonVisibility();
         restoreAppPreferencesHomeScreen(firstGridBtn, firstPositionIndicator, "firstDeviceBtn");
+        restoreAppPreferencesHomeScreen(secondGridBtn, secondPositionIndicator, "secondDeviceBtn");
+        restoreAppPreferencesHomeScreen(thirdGridBtn, thirdPositionIndicator, "thirdDeviceBtn");
+        restoreAppPreferencesHomeScreen(fourthGridBtn, fourthPositionIndicator, "fourthDeviceBtn");
+
         addDeviceBtn();
         toCommandScreen();
 
@@ -154,7 +156,7 @@ public class HomeFragment extends Fragment {
         Chip decreaseBtn = dialogView.findViewById(R.id.decreaseBtn);
         Chip increaseBtn = dialogView.findViewById(R.id.increaseBtn);
         EditText seekBarValue = dialogView.findViewById(R.id.seekBarValue);
-        Button scheduleBtn = dialogView.findViewById(R.id.scheduleBtn);
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(dialogView);
@@ -165,6 +167,7 @@ public class HomeFragment extends Fragment {
         closeFullyCommand(closeBtn, seekBar, seekBarValue);
         closeByTenPercent(decreaseBtn, seekBar, seekBarValue);
         openByTenPercent(increaseBtn, seekBar, seekBarValue);
+        restoreSendCommandDialogPreferences(seekBar, seekBarValue);
     }
 
     public void mimicMainRollerShade(String device) {
@@ -201,12 +204,17 @@ public class HomeFragment extends Fragment {
                         databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
                         databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
 
-                        mimicMainRollerShade("Roller Shade Control");
-                        makeNotification("Roller Shade - Opened Fully", R.drawable.rs_open);
-                        changeButtonColor(firstPositionIndicator, firstGridBtn, "Roller Shade Control", "Position: Opened - Fully");
-                        //saveButtonVisibility();
+                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
+                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Open - Fully");
+
                         seekBar.setProgress(10);
                         seekBarValue.setText("100%");
+
+                        String seekBarTextValue = seekBarValue.getText().toString();
+                        Integer seekBarPositionValue = seekBar.getProgress();
+
+                        saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
+                        makeNotification("Roller Shade - Opened Fully", R.drawable.rs_open);
 
                     }
 
@@ -235,11 +243,17 @@ public class HomeFragment extends Fragment {
                         databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
                         databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
 
+                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(0);
+                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Closed - Fully");
+
                         seekBar.setProgress(0);
                         seekBarValue.setText("0%");
+
+                        String seekBarTextValue = seekBarValue.getText().toString();
+                        Integer seekBarPositionValue = seekBar.getProgress();
+
+                        saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
                         makeNotification("Roller Shade - Closed Fully", R.drawable.rs_close);
-                        changeButtonColor(firstPositionIndicator, firstGridBtn, "Roller Shade Control", "Position: Closed - Fully");
-                        mimicMainRollerShade("Roller Shade Control");
 
                     }
 
@@ -260,13 +274,21 @@ public class HomeFragment extends Fragment {
                 seekBar.setProgress(seekBar.getProgress() - 1);
                 seekBarValue.setText(seekBar.getProgress() + "0%");
 
-                if (seekBar.getProgress() == 0) {
-                    seekBarValue.setText("0%");
+                String seekBarTextValue = seekBarValue.getText().toString();
+                Integer seekBarPositionValue = seekBar.getProgress();
+
+                if (seekBarPositionValue == 0) {
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Closed - Fully");
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(0);
+
+                } else {
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Open - " + seekBarTextValue);
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
                 }
 
-                readSeekBarValue(seekBarValue, decreaseBtn);
+                databaseReference.child("Roller Shade Control").child("App Request").setValue("Down");
+                saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
                 makeNotification("Roller Shade - Closed By 10%", R.drawable.rs_close);
-                mimicMainRollerShade("Roller Shade Control");
 
             }
         });
@@ -278,53 +300,30 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 seekBar.setProgress(seekBar.getProgress() + 1);
                 seekBarValue.setText(seekBar.getProgress() + "0%");
-                readSeekBarValue(seekBarValue, increaseBtn);
-                makeNotification("Roller Shade - Opened By 10%", R.drawable.rs_open);
-                mimicMainRollerShade("Roller Shade Control");
-            }
-        });
-    }
 
-    public void readSeekBarValue(EditText seekBarValue, Button button) {
-        String text = seekBarValue.getText().toString();
-        double percentage = Double.parseDouble(text.replace("%", "")) / 100.0;
-        double state = percentage;
+                String seekBarTextValue = seekBarValue.getText().toString();
+                Integer seekBarPositionValue = seekBar.getProgress();
 
-        if (!button.isPressed()) {
-            databaseReference.child("Roller Shade Control").child("App Request").setValue(0);
-        } else {
-            databaseReference.child("Roller Shade Control").child("App Request").setValue(1);
-        }
-
-        if (percentage == 0) {
-            databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(0);
-            databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue("Closed");
-        } else {
-            databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(1);
-            databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue("Opened");
-        }
-        databaseReference.child("Roller Shade Control").child("State").setValue(state);
-
-        databaseReference.child("Roller Shade Control").child("State").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                double newState = dataSnapshot.getValue(Double.class);
-                if (newState == state) {
-                    databaseReference.child("Roller Shade Control").child("App Request").setValue(0);
+                if (seekBarPositionValue == 10) {
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Opened - Fully");
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
+                } else {
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Open - " + seekBarTextValue);
+                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                databaseReference.child("Roller Shade Control").child("App Request").setValue("Up");
+                saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
+                makeNotification("Roller Shade - Opened By 10%", R.drawable.rs_open);
             }
         });
     }
 
     public void restoreAppPreferencesHomeScreen(Button button, TextView positionIndicator, String devicePath) {
-        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+
                     String roomName = snapshot.child("Room Name").getValue(String.class);
                     if (roomName != null) {
                         button.setText(roomName);
@@ -348,16 +347,26 @@ public class HomeFragment extends Fragment {
                         positionIndicator.setText(PositionText);
                     }
 
-                    Integer BtnVisibility = snapshot.child("Visibility").getValue(Integer.class);
-                    if (BtnVisibility != null) {
-                        if (BtnVisibility == 0) {
+                    Integer btnColor = snapshot.child("Color").getValue(Integer.class);
+                    if (btnColor != null) {
+                        if (btnColor == 0) {
+                            button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
+                        } else if (btnColor == 1) {
+                            button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.GREEN)));
+                        }
+                    }
+
+                    Integer btnVisibility = snapshot.child("Visibility").getValue(Integer.class);
+                    if (btnVisibility != null) {
+                        if (btnVisibility == 0) {
                             button.setVisibility(View.VISIBLE);
-                        } else if (BtnVisibility == 1) {
+                        } else if (btnVisibility == 1) {
                             button.setVisibility(View.GONE);
                         }
 
                     }
                 }
+
             }
 
             @Override
@@ -367,11 +376,40 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void saveAppPreferencesHomeScreen(String devicePath, String roomName, Integer iconSelected, String positionText, Integer btnVisibility) {
+    public void saveAppPreferencesHomeScreen(String devicePath, String roomName, Integer iconSelected, String positionText, Integer btnColor, Integer btnVisibility ) {
         databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Room Name").setValue(roomName);
         databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Selected Icon").setValue(iconSelected);
         databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Position").setValue(positionText);
+        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Color").setValue(btnColor);
         databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Visibility").setValue(btnVisibility);
+    }
+
+    public void saveSendCommandDialogPreferences(String seekBarTextValue, Integer seekBarPositionValue) {
+        databaseReference.child("Users").child(uid).child("App Preferences - Command Dialog").child("SB Text Value").setValue(seekBarTextValue);
+        databaseReference.child("Users").child(uid).child("App Preferences - Command Dialog").child("SB Position Value").setValue(seekBarPositionValue);
+    }
+
+    public void restoreSendCommandDialogPreferences(SeekBar seekBar, EditText seekBarValue) {
+        databaseReference.child("Users").child(uid).child("App Preferences - Command Dialog").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String seekBarTextValue = snapshot.child("SB Text Value").getValue(String.class);
+                    Integer seekBarPositionValue = snapshot.child("SB Position Value").getValue(Integer.class);
+
+                    if (seekBarTextValue != null && seekBarPositionValue != null) {
+                        seekBarValue.setText(seekBarTextValue);
+                        seekBar.setProgress(seekBarPositionValue);
+                    }
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     public void addDeviceBtn() {
@@ -443,7 +481,6 @@ public class HomeFragment extends Fragment {
                     public void onClick(View v) {
                         String roomName = roomNameField.getText().toString();
 
-
                         if (firstGridBtn.getVisibility() == View.GONE) {
                             firstGridBtn.setText(roomName);
                             firstPositionIndicator.setText("Position:");
@@ -477,18 +514,20 @@ public class HomeFragment extends Fragment {
 
                                 }
                             });
-                            themeButtonColor(firstGridBtn);
+                            firstGridBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));;
+                            int firstBtnColor = 0;
                             firstGridBtn.setVisibility(View.VISIBLE);
-
                             int firstBtnVisibility = firstGridBtn.getVisibility();
 
                             String databasePath = "firstDeviceBtn";
-                            saveAppPreferencesHomeScreen(databasePath, roomName, firstSelectedIcon, firstPositionText, firstBtnVisibility);
+                            saveAppPreferencesHomeScreen(databasePath, roomName, firstSelectedIcon, firstPositionText, firstBtnColor, firstBtnVisibility);
                             dialog.dismiss();
 
                         } else if (firstGridBtn.getVisibility() == View.VISIBLE && secondGridBtn.getVisibility() == View.GONE) {
                             secondGridBtn.setText(roomName);
                             secondPositionIndicator.setText("Position: N/A");
+
+                            String secondPositionText = secondPositionIndicator.getText().toString();
 
                             if (selectedIcon == 1) {
                                 secondGridBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_living_room, 0);
@@ -499,7 +538,9 @@ public class HomeFragment extends Fragment {
                             } else if (selectedIcon == 4) {
                                 secondGridBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bathroom, 0);
                             }
+
                             secondSelectedIcon = selectedIcon;
+
                             databaseReference.child("Users").child("Roller Shade Control 2").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -515,12 +556,20 @@ public class HomeFragment extends Fragment {
 
                                 }
                             });
-                            themeButtonColor(secondGridBtn);
+                            secondGridBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));;
+                            int secondBtnColor = 0;
                             secondGridBtn.setVisibility(View.VISIBLE);
+                            int secondBtnVisibility = firstGridBtn.getVisibility();
+
+                            String databasePath = "secondDeviceBtn";
+                            saveAppPreferencesHomeScreen(databasePath, roomName, secondSelectedIcon, secondPositionText, secondBtnColor, secondBtnVisibility);
                             dialog.dismiss();
+
                         } else if (firstGridBtn.getVisibility() == View.VISIBLE && secondGridBtn.getVisibility() == View.VISIBLE && thirdGridBtn.getVisibility() == View.GONE) {
                             thirdGridBtn.setText(roomName);
                             thirdPositionIndicator.setText("Position: N/A");
+
+                            String thirdPositionText = thirdPositionIndicator.getText().toString();
 
                             if (selectedIcon == 1) {
                                 thirdGridBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_living_room, 0);
@@ -531,7 +580,9 @@ public class HomeFragment extends Fragment {
                             } else if (selectedIcon == 4) {
                                 thirdGridBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bathroom, 0);
                             }
+
                             thirdSelectedIcon = selectedIcon;
+
                             databaseReference.child("Users").child("Roller Shade Control 3").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -547,12 +598,20 @@ public class HomeFragment extends Fragment {
 
                                 }
                             });
-                            themeButtonColor(thirdGridBtn);
+                            thirdGridBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));;
+                            int thirdBtnColor = 0;
                             thirdGridBtn.setVisibility(View.VISIBLE);
+                            int thirdBtnVisibility = thirdGridBtn.getVisibility();
+
+                            String databasePath = "thirdDeviceBtn";
+                            saveAppPreferencesHomeScreen(databasePath, roomName, thirdSelectedIcon, thirdPositionText, thirdBtnColor, thirdBtnVisibility);
                             dialog.dismiss();
+
                         } else if (firstGridBtn.getVisibility() == View.VISIBLE && secondGridBtn.getVisibility() == View.VISIBLE && thirdGridBtn.getVisibility() == View.VISIBLE && fourthGridBtn.getVisibility() == View.GONE) {
                             fourthGridBtn.setText(roomName);
                             fourthPositionIndicator.setText("Position: N/A");
+
+                            String fourthPositionText = fourthPositionIndicator.getText().toString();
 
                             if (selectedIcon == 1) {
                                 fourthGridBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_living_room, 0);
@@ -563,7 +622,9 @@ public class HomeFragment extends Fragment {
                             } else if (selectedIcon == 4) {
                                 fourthGridBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bathroom, 0);
                             }
+
                             fourthSelectedIcon = selectedIcon;
+
                             databaseReference.child("Users").child("Roller Shade Control 4").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -579,11 +640,15 @@ public class HomeFragment extends Fragment {
 
                                 }
                             });
-                            themeButtonColor(fourthGridBtn);
+                            fourthGridBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));;
+                            int fourthBtnColor = 0;
                             fourthGridBtn.setVisibility(View.VISIBLE);
+                            int fourthBtnVisibility = firstGridBtn.getVisibility();
+
+                            String databasePath = "fourthDeviceBtn";
+                            saveAppPreferencesHomeScreen(databasePath, roomName, fourthSelectedIcon, fourthPositionText, fourthBtnColor, fourthBtnVisibility);
                             dialog.dismiss();
                         }
-                        //saveButtonVisibility();
                     }
                 });
                 cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -599,46 +664,20 @@ public class HomeFragment extends Fragment {
     private void deleteDevice(Button button) {
         // Hide the button
         button.setVisibility(View.GONE);
-        //saveButtonVisibility();
 
         if (button == firstGridBtn) {
             databaseReference.child("Users").child(uid).child("Roller Shade Control").removeValue();
+            databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").removeValue();
         } else if (button == secondGridBtn) {
             databaseReference.child("Users").child(uid).child("Roller Shade Control 2").removeValue();
+            databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("secondDeviceBtn").removeValue();
         } else if (button == thirdGridBtn) {
             databaseReference.child("Users").child(uid).child("Roller Shade Control 3").removeValue();
+            databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("thirdDeviceBtn").removeValue();
         } else if (button == fourthGridBtn) {
             databaseReference.child("Users").child(uid).child("Roller Shade Control 4").removeValue();
+            databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("fourthDeviceBtn").removeValue();
         }
-    }
-
-    public void themeButtonColor(Button gridBtn) {
-        gridBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
-    }
-
-    public void changeButtonColor(TextView positionIndicator, Button gridBtn, String device, String position) {
-        databaseReference.child(device).child("Open-Close Roller Shade")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            String rollerShadeState = dataSnapshot.getValue(String.class);
-                            if (rollerShadeState != null) {
-                                if (rollerShadeState.equals("Opened")) {
-                                    positionIndicator.setText(position);
-                                    gridBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.GREEN)));
-                                } if (rollerShadeState.equals("Closed")) {
-                                    positionIndicator.setText(position);
-                                    gridBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
     }
 
     public void makeNotification(String contentText, int iconResourceId) {
@@ -744,75 +783,4 @@ public class HomeFragment extends Fragment {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-
-//    private void restoreButtonVisibility() {
-//        firstGridBtn.setVisibility(sharedPreferences.getBoolean("firstGridBtn", false) ? View.VISIBLE : View.GONE);
-//        firstGridBtn.setText(sharedPreferences.getString("firstGridBtnRoomName", ""));
-//        firstPositionIndicator.setText(sharedPreferences.getString("firstGridBtnPosition", ""));
-//        firstSelectedIcon = sharedPreferences.getInt("firstGridBtnIcon", -1);
-//        setCompoundDrawable(firstGridBtn, firstSelectedIcon);
-//        themeButtonColor(firstGridBtn);
-//
-//        secondGridBtn.setVisibility(sharedPreferences.getBoolean("secondGridBtn", false) ? View.VISIBLE : View.GONE);
-//        secondGridBtn.setText(sharedPreferences.getString("secondGridBtnRoomName", ""));
-//        secondPositionIndicator.setText(sharedPreferences.getString("secondGridBtnPosition", ""));
-//        secondSelectedIcon = sharedPreferences.getInt("secondGridBtnIcon", -1);
-//        setCompoundDrawable(secondGridBtn, secondSelectedIcon);
-//        themeButtonColor(secondGridBtn);
-//
-//        thirdGridBtn.setVisibility(sharedPreferences.getBoolean("thirdGridBtn", false) ? View.VISIBLE : View.GONE);
-//        thirdGridBtn.setText(sharedPreferences.getString("thirdGridBtnRoomName", ""));
-//        thirdPositionIndicator.setText(sharedPreferences.getString("thirdGridBtnPosition", ""));
-//        thirdSelectedIcon = sharedPreferences.getInt("thirdGridBtnIcon", -1);
-//        setCompoundDrawable(thirdGridBtn, thirdSelectedIcon);
-//        themeButtonColor(thirdGridBtn);
-//
-//        fourthGridBtn.setVisibility(sharedPreferences.getBoolean("fourthGridBtn", false) ? View.VISIBLE : View.GONE);
-//        fourthGridBtn.setText(sharedPreferences.getString("fourthGridBtnRoomName", ""));
-//        fourthPositionIndicator.setText(sharedPreferences.getString("fourthGridBtnPosition", ""));
-//        fourthSelectedIcon = sharedPreferences.getInt("fourthGridBtnIcon", -1);
-//        setCompoundDrawable(fourthGridBtn, fourthSelectedIcon);
-//        themeButtonColor(fourthGridBtn);
-//    }
-//
-//    private void setCompoundDrawable(Button button, int selectedIcon) {
-//        if (selectedIcon == 1) {
-//            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_living_room, 0);
-//        } else if (selectedIcon == 2) {
-//            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bedroom, 0);
-//        } else if (selectedIcon == 3) {
-//            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_kitchen, 0);
-//        } else if (selectedIcon == 4) {
-//            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bathroom, 0);
-//        } else {
-//            // Set default compound drawable if no icon is selected
-//            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-//        }
-//    }
-//
-//    private void saveButtonVisibility() {
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//
-//        editor.putBoolean("firstGridBtn", firstGridBtn.getVisibility() == View.VISIBLE);
-//        editor.putString("firstGridBtnRoomName", firstGridBtn.getText().toString());
-//        editor.putString("firstGridBtnPosition", firstPositionIndicator.getText().toString());
-//        editor.putInt("firstGridBtnIcon", firstSelectedIcon);
-//
-//        editor.putBoolean("secondGridBtn", secondGridBtn.getVisibility() == View.VISIBLE);
-//        editor.putString("secondGridBtnRoomName", secondGridBtn.getText().toString());
-//        editor.putString("secondGridBtnPosition", secondPositionIndicator.getText().toString());
-//        editor.putInt("secondGridBtnIcon", secondSelectedIcon);
-//
-//        editor.putBoolean("thirdGridBtn", thirdGridBtn.getVisibility() == View.VISIBLE);
-//        editor.putString("thirdGridBtnRoomName", thirdGridBtn.getText().toString());
-//        editor.putString("thirdGridBtnPosition", thirdPositionIndicator.getText().toString());
-//        editor.putInt("thirdGridBtnIcon", thirdSelectedIcon);
-//
-//        editor.putBoolean("fourthGridBtn", fourthGridBtn.getVisibility() == View.VISIBLE);
-//        editor.putString("fourthGridBtnRoomName", fourthGridBtn.getText().toString());
-//        editor.putString("fourthGridBtnPosition", fourthPositionIndicator.getText().toString());
-//        editor.putInt("fourthGridBtnIcon", fourthSelectedIcon);
-//
-//        editor.apply();
-//    }
 }
