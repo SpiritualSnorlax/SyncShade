@@ -64,10 +64,51 @@ public class QuestionFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_question, container, false);
+
+        TextView whatHomeScreen = rootView.findViewById(R.id.whatHomeScreen);
+        TextView whatHomeScreenInfo = rootView.findViewById(R.id.whatHomeScreenInfo);
+
         TextView faqAddDevice = rootView.findViewById(R.id.faqAddDevice);
         TextView faqAddDeviceInfo = rootView.findViewById(R.id.faqAddDeviceInfo);
 
+        TextView faqControlDevice = rootView.findViewById(R.id.faqControlDevice);
+        TextView faqControlDeviceInfo = rootView.findViewById(R.id.faqControlDeviceInfo);
+
+        TextView faqDeleteDevice = rootView.findViewById(R.id.faqDeleteDevice);
+        TextView faqDeleteDeviceInfo = rootView.findViewById(R.id.faqDeleteDeviceInfo);
+
+        TextView whatScheduleScreen = rootView.findViewById(R.id.whatScheduleScreen);
+        TextView whatScheduleScreenInfo = rootView.findViewById(R.id.whatScheduleScreenInfo);
+
+        TextView faqCreateSchedule = rootView.findViewById(R.id.faqCreateSchedule);
+        TextView faqCreateScheduleInfo = rootView.findViewById(R.id.faqCreateScheduleInfo);
+
+        TextView faqDeleteSchedule = rootView.findViewById(R.id.faqDeleteSchedule);
+        TextView faqDeleteScheduleInfo = rootView.findViewById(R.id.faqDeleteScheduleInfo);
+
+        TextView whatAccountScreen = rootView.findViewById(R.id.whatAccountScreen);
+        TextView whatAccountScreenInfo = rootView.findViewById(R.id.whatAccountScreenInfo);
+
+        TextView faqSignOut = rootView.findViewById(R.id.faqSignOut);
+        TextView faqSignOutInfo = rootView.findViewById(R.id.faqSignOutInfo);
+
+        TextView faqChangePassword = rootView.findViewById(R.id.faqChangePassword);
+        TextView faqChangePasswordInfo = rootView.findViewById(R.id.faqChangePasswordInfo);
+
+        TextView faqDeleteAccount = rootView.findViewById(R.id.faqDeleteAccount);
+        TextView faqDeleteAccountInfo = rootView.findViewById(R.id.faqDeleteAccountInfo);
+
+        dropDownMenu(whatHomeScreen, whatHomeScreenInfo);
         dropDownMenu(faqAddDevice, faqAddDeviceInfo);
+        dropDownMenu(faqControlDevice, faqControlDeviceInfo);
+        dropDownMenu(faqDeleteDevice, faqDeleteDeviceInfo);
+        dropDownMenu(whatScheduleScreen, whatScheduleScreenInfo);
+        dropDownMenu(faqCreateSchedule, faqCreateScheduleInfo);
+        dropDownMenu(faqDeleteSchedule, faqDeleteScheduleInfo);
+        dropDownMenu(whatAccountScreen, whatAccountScreenInfo);
+        dropDownMenu(faqSignOut, faqSignOutInfo);
+        dropDownMenu(faqChangePassword, faqChangePasswordInfo);
+        dropDownMenu(faqDeleteAccount, faqDeleteAccountInfo);
 
         return rootView;
     }

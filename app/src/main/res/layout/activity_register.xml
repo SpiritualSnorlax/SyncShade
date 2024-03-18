@@ -13,7 +13,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="88dp"
         android:fontFamily="sans-serif"
-        android:text="Create Account"
+        android:text="Sync Shade - Register"
+        android:textStyle="bold"
+        android:textColor="@color/THEMECOLOR"
         android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

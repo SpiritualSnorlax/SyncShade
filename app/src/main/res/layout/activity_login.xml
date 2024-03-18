@@ -8,48 +8,29 @@
 
 
     <TextView
-        android:id="@+id/welcomeBack"
+        android:id="@+id/signIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="88dp"
         android:fontFamily="sans-serif"
-        android:text="Hi, Welcome Back!"
+        android:text="Sync Shade - Sign In"
+        android:textStyle="bold"
+        android:textColor="@color/THEMECOLOR"
         android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="59dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginEnd="108dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/waving_hand_emoji" />
-
-    <TextView
-        android:id="@+id/helloMsg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
-        android:text="Hello again, you've been missed!"
-        android:textColor="#999EA1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeBack" />
 
     <TextView
         android:id="@+id/emailText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="28dp"
         android:text="Email"
         android:textColor="#126A9B"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeBack" />
+        app:layout_constraintTop_toBottomOf="@+id/signIn" />
 
     <TextView
         android:id="@+id/passwordText"
@@ -67,13 +48,13 @@
         android:layout_width="371dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="8dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
         app:boxStrokeColor="#126A9B"
         app:hintTextColor="#126A9B"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/helloMsg" >
+        app:layout_constraintTop_toBottomOf="@+id/emailText">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"

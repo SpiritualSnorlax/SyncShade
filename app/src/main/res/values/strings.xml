@@ -2,4 +2,17 @@
     <string name="app_name">SyncShade</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="faq_what_home_screen_info">The home screen is used to add your devices, control your devices, and delete your devices.</string>
+    <string name="faq_add_device_info">On the home screen, tap the \"+\" button. Enter your room name, select an icon, and tap \"Add\". Your device will be added to the home screen.</string>
+    <string name="faq_control_device_info">On the home screen, tap your device to access the \"Send Command\" window. Use \"Open\" to fully open the roller shade, \"Close\" to fully close it, \"+\" to open by 10%, and \"-\" to close by 10%.</string>
+    <string name="faq_delete_device_info">On the home screen, press and hold your device to open the \"Delete Device\" window. Tap \"Delete\" to remove the device.</string>
+    <string name="faq_schedule_screen_info">The schedule screen is used to create schedules for your devices, allowing you to open and close the roller shade at specified days and times.</string>
+    <string name="faq_create_schedule_info">On the schedule screen, tap the \"+\" button. Choose the command you would like to send by pressing \"Open - Fully\" or \"Close - Fully\". Choose the days you would like the commands to send. Choose the time you would like the command to send by pressing \"Choose Time\" and specify the time, as well as, \"A.M.\" or \"P.M.\", and press \"OK\". Finally, press \"Add\" to create the schedule. It will appear on the schedule screen.</string>
+    <string name="faq_delete_schedule_info">On the schedule screen, press and hold your created schedule to open the \"Delete Schedule\" window. Tap \"Delete\" to remove the schedule.</string>
+    <string name="faq_account_screen_info">The account screen is used to view your registered email, UID, and phone number. It is also used to sign out of the application, change your password, and delete your account.</string>
+    <string name="faq_sign_out_info">On the account screen, tap \"Sign Out\". You will be signed out of the application.</string>
+    <string name="faq_change_password_info">On the account screen, tap \"Change Password\" to open the \"Change Password\" window. A password reset email will be sent to your registered email address. Follow the instructions in that email to change your password.</string>
+    <string name="faq_delete_account_info">On the account screen, tap \"Delete Account\" to open the \"Delete Account\" window. Tap \"Delete\" to delete your account.</string>
+
 </resources>

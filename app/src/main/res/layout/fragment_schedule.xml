@@ -25,7 +25,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="56dp"
         android:fontFamily="sans-serif"
-        android:text="Schedule Screen"
+        android:text="SyncShade - Schedule"
         android:textColor="@color/THEMECOLOR"
         android:textSize="28sp"
         android:textStyle="bold"
