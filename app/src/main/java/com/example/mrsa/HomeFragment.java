@@ -88,8 +88,6 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = mAuth.getCurrentUser();
     String uid = currentUser.getUid();
-    SharedPreferences sharedPreferences;
-
 
     public HomeFragment() {
         // Required empty public constructor
@@ -138,13 +136,12 @@ public class HomeFragment extends Fragment {
         thirdPositionIndicator = rootView.findViewById(R.id.thirdPositionIndicator);
         fourthPositionIndicator = rootView.findViewById(R.id.fourthPositionIndicator);
 
+        addDeviceBtn();
+        toCommandScreen();
         restoreAppPreferencesHomeScreen(firstGridBtn, firstPositionIndicator, "firstDeviceBtn");
         restoreAppPreferencesHomeScreen(secondGridBtn, secondPositionIndicator, "secondDeviceBtn");
         restoreAppPreferencesHomeScreen(thirdGridBtn, thirdPositionIndicator, "thirdDeviceBtn");
         restoreAppPreferencesHomeScreen(fourthGridBtn, fourthPositionIndicator, "fourthDeviceBtn");
-
-        addDeviceBtn();
-        toCommandScreen();
 
         return rootView;
     }
@@ -322,51 +319,51 @@ public class HomeFragment extends Fragment {
         databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+                if (getActivity() != null && isAdded()) { // Check if fragment is attached to an activity
+                    if (snapshot.exists()) {
 
-                    String roomName = snapshot.child("Room Name").getValue(String.class);
-                    if (roomName != null) {
-                        button.setText(roomName);
-                    }
-
-                    Integer selectedIcon = snapshot.child("Selected Icon").getValue(Integer.class);
-                    if (selectedIcon != null) {
-                        if (selectedIcon == 1) {
-                            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_living_room, 0);
-                        } else if (selectedIcon == 2) {
-                            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bedroom, 0);
-                        } else if (selectedIcon == 3) {
-                            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_kitchen, 0);
-                        } else if (selectedIcon == 4) {
-                            button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bathroom, 0);
-                        }
-                    }
-
-                    String PositionText = snapshot.child("Position").getValue(String.class);
-                    if (PositionText != null) {
-                        positionIndicator.setText(PositionText);
-                    }
-
-                    Integer btnColor = snapshot.child("Color").getValue(Integer.class);
-                    if (btnColor != null) {
-                        if (btnColor == 0) {
-                            button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
-                        } else if (btnColor == 1) {
-                            button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.GREEN)));
-                        }
-                    }
-
-                    Integer btnVisibility = snapshot.child("Visibility").getValue(Integer.class);
-                    if (btnVisibility != null) {
-                        if (btnVisibility == 0) {
-                            button.setVisibility(View.VISIBLE);
-                        } else if (btnVisibility == 1) {
-                            button.setVisibility(View.GONE);
+                        String roomName = snapshot.child("Room Name").getValue(String.class);
+                        if (roomName != null) {
+                            button.setText(roomName);
                         }
 
+                        Integer selectedIcon = snapshot.child("Selected Icon").getValue(Integer.class);
+                        if (selectedIcon != null) {
+                            if (selectedIcon == 1) {
+                                button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_living_room, 0);
+                            } else if (selectedIcon == 2) {
+                                button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bedroom, 0);
+                            } else if (selectedIcon == 3) {
+                                button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_kitchen, 0);
+                            } else if (selectedIcon == 4) {
+                                button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bathroom, 0);
+                            }
+                        }
+
+                        String PositionText = snapshot.child("Position").getValue(String.class);
+                        if (PositionText != null) {
+                            positionIndicator.setText(PositionText);
+                        }
+
+                        Integer btnColor = snapshot.child("Color").getValue(Integer.class);
+                        if (btnColor != null) {
+                            if (btnColor == 0) {
+                                button.setBackgroundTintList(ColorStateList.valueOf(requireContext().getResources().getColor(R.color.THEMECOLOR)));
+                            } else if (btnColor == 1) {
+                                button.setBackgroundTintList(ColorStateList.valueOf(requireContext().getResources().getColor(R.color.GREEN)));
+                            }
+                        }
+
+                        Integer btnVisibility = snapshot.child("Visibility").getValue(Integer.class);
+                        if (btnVisibility != null) {
+                            if (btnVisibility == 0) {
+                                button.setVisibility(View.VISIBLE);
+                            } else if (btnVisibility == 1) {
+                                button.setVisibility(View.GONE);
+                            }
+                        }
                     }
                 }
-
             }
 
             @Override

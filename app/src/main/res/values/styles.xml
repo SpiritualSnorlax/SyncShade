@@ -14,4 +14,9 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="CustomTimePickerDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="colorPrimary">#126A9B</item> <!-- Change the color to #126A9B -->
+        <item name="colorSecondary">#126A9B</item>
+    </style>
+
 </resources>

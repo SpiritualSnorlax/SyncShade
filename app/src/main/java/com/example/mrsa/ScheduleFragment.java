@@ -1,43 +1,41 @@
 package com.example.mrsa;
 
-import static android.graphics.BlendMode.COLOR;
-
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
@@ -54,22 +52,21 @@ public class ScheduleFragment extends Fragment {
     Button firstScheduleBtn;
     Button secondScheduleBtn;
     Button thirdScheduleBtn;
-    Button fourthScheduleBtn;
-    Button fifthScheduleBtn;
-    Switch firstScheduleSwitch;
-    Switch secondScheduleSwitch;
-    Switch thirdScheduleSwitch;
-    Switch fourthScheduleSwitch;
-    Switch fifthScheduleSwitch;
-
-    TextView daysOfWeek;
-
+    int firstScheduleBtnIcon;
+    int secondScheduleBtnIcon;
+    int thirdScheduleBtnIcon;
+    TextView firstSchedule;
+    TextView secondSchedule;
+    TextView thirdSchedule;
     int selectedHour;
     int selectedMinute;
-
     private TimePickerDialog timePickerDialog;
-
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mrsa-test-services-default-rtdb.firebaseio.com/");
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser currentUser = mAuth.getCurrentUser();
+    String uid = currentUser.getUid();
+
+    private List<TimerTask> scheduledTasks = new ArrayList<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -120,13 +117,16 @@ public class ScheduleFragment extends Fragment {
         secondScheduleBtn = rootView.findViewById(R.id.secondScheduleBtn);
         thirdScheduleBtn = rootView.findViewById(R.id.thirdScheduleBtn);
 
-        firstScheduleSwitch = rootView.findViewById(R.id.firstScheduleSwitch);
-        secondScheduleSwitch = rootView.findViewById(R.id.secondScheduleSwitch);
-        thirdScheduleSwitch = rootView.findViewById(R.id.thirdScheduleSwitch);
-
-        daysOfWeek = rootView.findViewById(R.id.daysOfWeek);
+        firstSchedule = rootView.findViewById(R.id.firstSchedule);
+        secondSchedule = rootView.findViewById(R.id.secondSchedule);
+        thirdSchedule = rootView.findViewById(R.id.thirdSchedule);
 
         scheduleCommands();
+        deleteSchedule();
+
+        restoreAppPreferencesScheduleScreen(firstScheduleBtn, firstSchedule, "firstScheduleBtn");
+        restoreAppPreferencesScheduleScreen(secondScheduleBtn, secondSchedule, "secondScheduleBtn");
+        restoreAppPreferencesScheduleScreen(thirdScheduleBtn, thirdSchedule, "thirdScheduleBtn");
         return rootView;
     }
 
@@ -141,6 +141,8 @@ public class ScheduleFragment extends Fragment {
                 databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
                 databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
                 databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
+                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Opened - Fully");
+                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
             }
 
             @Override
@@ -148,6 +150,36 @@ public class ScheduleFragment extends Fragment {
 
             }
         });
+    }
+
+    public void closeFullyScheduledCommand() {
+        databaseReference.child("Users").child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int appRequestValue = 1;
+                int ocFullyValue = 0;
+                String ocRollerShadeValue = "Closed";
+
+                databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
+                databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
+                databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
+                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Closed - Fully");
+                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void executeCommandBasedOnChipSelection(boolean isOpenFully) {
+        if (isOpenFully) {
+            openFullyScheduledCommand();
+        } else {
+            closeFullyScheduledCommand();
+        }
     }
 
 
@@ -180,14 +212,10 @@ public class ScheduleFragment extends Fragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            // ChipOpenFully is checked, set its background color to GREEN
                             chipOpenFully.setChipBackgroundColorResource(R.color.GREEN);
-                            // Uncheck ChipCloseFully if it is checked
                             chipCloseFully.setChecked(false);
-                            // Set its background color back to THEMECOLOR
                             chipCloseFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
                         } else {
-                            // ChipOpenFully is unchecked, set its background color back to THEMECOLOR
                             chipOpenFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
                         }
                     }
@@ -197,14 +225,11 @@ public class ScheduleFragment extends Fragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            // ChipCloseFully is checked, set its background color to GREEN
                             chipCloseFully.setChipBackgroundColorResource(R.color.GREEN);
-                            // Uncheck ChipOpenFully if it is checked
                             chipOpenFully.setChecked(false);
-                            // Set its background color back to THEMECOLOR
                             chipOpenFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
+
                         } else {
-                            // ChipCloseFully is unchecked, set its background color back to THEMECOLOR
                             chipCloseFully.setChipBackgroundColorResource(R.color.THEMECOLOR);
                         }
                     }
@@ -246,115 +271,443 @@ public class ScheduleFragment extends Fragment {
                 chooseTime.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        timePickerDialog = new TimePickerDialog(requireContext(), new TimePickerDialog.OnTimeSetListener() {
+                        timePickerDialog = new TimePickerDialog(requireContext(),R.style.CustomTimePickerDialog, new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 selectedHour = hourOfDay;
                                 selectedMinute = minute;
 
-                                for (int checkedId : chipGroupDays.getCheckedChipIds()) {
+                                boolean isOpenFully = chipOpenFully.isChecked();
 
+                                for (int checkedId : chipGroupDays.getCheckedChipIds()) {
                                     if (checkedId == R.id.chipSunday) {
-                                        scheduleTask(Calendar.SUNDAY, hourOfDay, minute);
+                                        scheduleTask(Calendar.SUNDAY, hourOfDay, minute, isOpenFully);
                                     } else if(checkedId == R.id.chipMonday) {
-                                        scheduleTask(Calendar.MONDAY, hourOfDay, minute);
+                                        scheduleTask(Calendar.MONDAY, hourOfDay, minute, isOpenFully);
                                     } else if (checkedId == R.id.chipTuesday) {
-                                        scheduleTask(Calendar.TUESDAY, hourOfDay, minute);
+                                        scheduleTask(Calendar.TUESDAY, hourOfDay, minute, isOpenFully);
                                     } else if (checkedId == R.id.chipWednesday) {
-                                        scheduleTask(Calendar.WEDNESDAY, hourOfDay, minute);
+                                        scheduleTask(Calendar.WEDNESDAY, hourOfDay, minute, isOpenFully);
                                     } else if (checkedId == R.id.chipThursday) {
-                                        scheduleTask(Calendar.THURSDAY, hourOfDay, minute);
+                                        scheduleTask(Calendar.THURSDAY, hourOfDay, minute, isOpenFully);
                                     } else if (checkedId == R.id.chipFriday) {
-                                        scheduleTask(Calendar.FRIDAY, hourOfDay, minute);
+                                        scheduleTask(Calendar.FRIDAY, hourOfDay, minute, isOpenFully);
                                     } else if (checkedId == R.id.chipSaturday) {
-                                        scheduleTask(Calendar.SATURDAY, hourOfDay, minute);
+                                        scheduleTask(Calendar.SATURDAY, hourOfDay, minute, isOpenFully);
                                     }
                                 }
                             }
                         }, 15, 00, false);
                         timePickerDialog.show();
                     }
-
                 });
                 confirmScheduleBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Retrieve the hour and minute values from the TimePickerDialog
-                        int hour = selectedHour;
-                        int minute = selectedMinute;
+                        if (firstScheduleBtn.getVisibility() == View.GONE) {
+                            int iconState;
+                            if (chipOpenFully.isChecked()) {
+                                // Set the icon for chipOpenFully
+                                firstScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_open, 0);
+                                iconState = 0;
+                                firstScheduleBtnIcon = iconState;
+                            } else if (chipCloseFully.isChecked()) {
+                                // Set the icon for chipCloseFully
+                                firstScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_close, 0);
+                                iconState = 1;
+                                firstScheduleBtnIcon = iconState;
+                            }
 
-                        String amPm;
-                        if (hour >= 12) {
-                            amPm = "PM";
-                            if (hour > 12) {
-                                hour -= 12;
+
+                            // Retrieve the hour and minute values from the TimePickerDialog
+                            int hour = selectedHour;
+                            int minute = selectedMinute;
+
+                            String amPm;
+                            if (hour >= 12) {
+                                amPm = "p.m.";
+                                if (hour > 12) {
+                                    hour -= 12;
+                                }
+                            } else {
+                                amPm = "a.m.";
+                                if (hour == 0) {
+                                    hour = 12;
+                                }
                             }
-                        } else {
-                            amPm = "AM";
-                            if (hour == 0) {
-                                hour = 12;
+                            String firstScheduleBtnTime = String.format("%2d:%02d %s", hour, minute, amPm);
+
+                            String[] daysOfWeekText = new String[7]; // Array size 7 for days of the week
+                            int index = 0;
+
+                            for (int checkedId : chipGroupDays.getCheckedChipIds()) {
+                                if (checkedId == R.id.chipSunday) {
+                                    daysOfWeekText[index] = "Sun";
+                                } else if (checkedId == R.id.chipMonday) {
+                                    daysOfWeekText[index] = "Mon";
+                                } else if (checkedId == R.id.chipTuesday) {
+                                    daysOfWeekText[index] = "Tue";
+                                } else if (checkedId == R.id.chipWednesday) {
+                                    daysOfWeekText[index] = "Wed";
+                                } else if (checkedId == R.id.chipThursday) {
+                                    daysOfWeekText[index] = "Thurs";
+                                } else if (checkedId == R.id.chipFriday) {
+                                    daysOfWeekText[index] = "Fri";
+                                } else if (checkedId == R.id.chipSaturday) {
+                                    daysOfWeekText[index] = "Sat";
+                                }
+                                index++; // Move to the next position in the array
                             }
+
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (String day : daysOfWeekText) {
+                                if (day != null) {
+                                    stringBuilder.append(day).append(", "); // Append each day followed by a comma and space
+                                }
+                            }
+
+                            // Remove the trailing comma and space
+                            String concatenatedDays = stringBuilder.toString().trim();
+                            if (concatenatedDays.endsWith(",")) {
+                                concatenatedDays = concatenatedDays.substring(0, concatenatedDays.length() - 1);
+                            }
+
+                            // Set the text of the TextView to the concatenated string
+                            firstSchedule.setText(concatenatedDays);
+                            String daysOfWeekSelected = firstSchedule.getText().toString();
+
+
+                            firstScheduleBtn.setText(firstScheduleBtnTime);
+                            String time = firstScheduleBtn.getText().toString();
+
+                            firstScheduleBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
+                            int firstBtnColor = 0;
+
+                            firstScheduleBtn.setVisibility(View.VISIBLE);
+                            int firstScheduleBtnVisibility = firstScheduleBtn.getVisibility();
+
+                            String databasePath = "firstScheduleBtn";
+                            saveAppPreferencesScheduleScreen(databasePath, time, daysOfWeekSelected, firstBtnColor, firstScheduleBtnVisibility, firstScheduleBtnIcon);
+                            makeNotification("Schedule Created", R.drawable.icon_schedule_created);
+                            dialog.dismiss();
+
+                        } else if (firstScheduleBtn.getVisibility() == View.VISIBLE && secondScheduleBtn.getVisibility() == View.GONE) {
+                            int iconState;
+                            if (chipOpenFully.isChecked()) {
+                                // Set the icon for chipOpenFully
+                                secondScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_open, 0);
+                                iconState = 0;
+                                secondScheduleBtnIcon = iconState;
+                            } else if (chipCloseFully.isChecked()) {
+                                // Set the icon for chipCloseFully
+                                secondScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_close, 0);
+                                iconState = 1;
+                                secondScheduleBtnIcon = iconState;
+                            }
+
+
+                            // Retrieve the hour and minute values from the TimePickerDialog
+                            int hour = selectedHour;
+                            int minute = selectedMinute;
+
+                            String amPm;
+                            if (hour >= 12) {
+                                amPm = "p.m.";
+                                if (hour > 12) {
+                                    hour -= 12;
+                                }
+                            } else {
+                                amPm = "a.m.";
+                                if (hour == 0) {
+                                    hour = 12;
+                                }
+                            }
+                            String secondScheduleBtnTime = String.format("%2d:%02d %s", hour, minute, amPm);
+
+                            String[] daysOfWeekText = new String[7]; // Array size 7 for days of the week
+                            int index = 0;
+
+                            for (int checkedId : chipGroupDays.getCheckedChipIds()) {
+                                if (checkedId == R.id.chipSunday) {
+                                    daysOfWeekText[index] = "Sun";
+                                } else if (checkedId == R.id.chipMonday) {
+                                    daysOfWeekText[index] = "Mon";
+                                } else if (checkedId == R.id.chipTuesday) {
+                                    daysOfWeekText[index] = "Tue";
+                                } else if (checkedId == R.id.chipWednesday) {
+                                    daysOfWeekText[index] = "Wed";
+                                } else if (checkedId == R.id.chipThursday) {
+                                    daysOfWeekText[index] = "Thurs";
+                                } else if (checkedId == R.id.chipFriday) {
+                                    daysOfWeekText[index] = "Fri";
+                                } else if (checkedId == R.id.chipSaturday) {
+                                    daysOfWeekText[index] = "Sat";
+                                }
+                                index++; // Move to the next position in the array
+                            }
+
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (String day : daysOfWeekText) {
+                                if (day != null) {
+                                    stringBuilder.append(day).append(", "); // Append each day followed by a comma and space
+                                }
+                            }
+
+                            // Remove the trailing comma and space
+                            String concatenatedDays = stringBuilder.toString().trim();
+                            if (concatenatedDays.endsWith(",")) {
+                                concatenatedDays = concatenatedDays.substring(0, concatenatedDays.length() - 1);
+                            }
+
+                            // Set the text of the TextView to the concatenated string
+                            secondSchedule.setText(concatenatedDays);
+                            String daysOfWeekSelected = secondSchedule.getText().toString();
+
+
+                            secondScheduleBtn.setText(secondScheduleBtnTime);
+                            String time = secondScheduleBtn.getText().toString();
+
+                            secondScheduleBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
+                            int secondBtnColor = 0;
+
+                            secondScheduleBtn.setVisibility(View.VISIBLE);
+                            int secondScheduleBtnVisibility = secondScheduleBtn.getVisibility();
+
+                            String databasePath = "secondScheduleBtn";
+                            saveAppPreferencesScheduleScreen(databasePath, time, daysOfWeekSelected, secondBtnColor, secondScheduleBtnVisibility, secondScheduleBtnIcon);
+                            makeNotification("Schedule Created", R.drawable.icon_schedule_created);
+                            dialog.dismiss();
+
+                        } else if (firstScheduleBtn.getVisibility() == View.VISIBLE && secondScheduleBtn.getVisibility() == View.VISIBLE) {
+                            int iconState;
+                            if (chipOpenFully.isChecked()) {
+                                // Set the icon for chipOpenFully
+                                thirdScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_open, 0);
+                                iconState = 0;
+                                thirdScheduleBtnIcon = iconState;
+                            } else if (chipCloseFully.isChecked()) {
+                                // Set the icon for chipCloseFully
+                                thirdScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_close, 0);
+                                iconState = 1;
+                                thirdScheduleBtnIcon = iconState;
+                            }
+
+
+                            // Retrieve the hour and minute values from the TimePickerDialog
+                            int hour = selectedHour;
+                            int minute = selectedMinute;
+
+                            String amPm;
+                            if (hour >= 12) {
+                                amPm = "p.m.";
+                                if (hour > 12) {
+                                    hour -= 12;
+                                }
+                            } else {
+                                amPm = "a.m.";
+                                if (hour == 0) {
+                                    hour = 12;
+                                }
+                            }
+                            String thirdScheduleBtnTime = String.format("%2d:%02d %s", hour, minute, amPm);
+
+                            String[] daysOfWeekText = new String[7]; // Array size 7 for days of the week
+                            int index = 0;
+
+                            for (int checkedId : chipGroupDays.getCheckedChipIds()) {
+                                if (checkedId == R.id.chipSunday) {
+                                    daysOfWeekText[index] = "Sun";
+                                } else if (checkedId == R.id.chipMonday) {
+                                    daysOfWeekText[index] = "Mon";
+                                } else if (checkedId == R.id.chipTuesday) {
+                                    daysOfWeekText[index] = "Tue";
+                                } else if (checkedId == R.id.chipWednesday) {
+                                    daysOfWeekText[index] = "Wed";
+                                } else if (checkedId == R.id.chipThursday) {
+                                    daysOfWeekText[index] = "Thurs";
+                                } else if (checkedId == R.id.chipFriday) {
+                                    daysOfWeekText[index] = "Fri";
+                                } else if (checkedId == R.id.chipSaturday) {
+                                    daysOfWeekText[index] = "Sat";
+                                }
+                                index++; // Move to the next position in the array
+                            }
+
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (String day : daysOfWeekText) {
+                                if (day != null) {
+                                    stringBuilder.append(day).append(", "); // Append each day followed by a comma and space
+                                }
+                            }
+
+                            // Remove the trailing comma and space
+                            String concatenatedDays = stringBuilder.toString().trim();
+                            if (concatenatedDays.endsWith(",")) {
+                                concatenatedDays = concatenatedDays.substring(0, concatenatedDays.length() - 1);
+                            }
+
+                            // Set the text of the TextView to the concatenated string
+                            thirdSchedule.setText(concatenatedDays);
+                            String daysOfWeekSelected = thirdSchedule.getText().toString();
+
+
+                            thirdScheduleBtn.setText(thirdScheduleBtnTime);
+                            String time = thirdScheduleBtn.getText().toString();
+
+                            thirdScheduleBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
+                            int thirdBtnColor = 0;
+
+                            thirdScheduleBtn.setVisibility(View.VISIBLE);
+                            int thirdScheduleBtnVisibility = thirdScheduleBtn.getVisibility();
+
+                            String databasePath = "thirdScheduleBtn";
+                            saveAppPreferencesScheduleScreen(databasePath, time, daysOfWeekSelected, thirdBtnColor, thirdScheduleBtnVisibility, thirdScheduleBtnIcon);
+                            makeNotification("Schedule Created", R.drawable.icon_schedule_created);
+                            dialog.dismiss();
                         }
-                        String firstScheduleBtnTime = String.format("%2d:%02d %s", hour, minute, amPm);
-
-
-                        String daysOfWeekText = "S M T W T F S";
-                        SpannableString spannableString = new SpannableString(daysOfWeekText);
-                        int color = Color.GREEN;
-
-                        for (int checkedId : chipGroupDays.getCheckedChipIds()) {
-                            int start = 0;
-                            int end = 0;
-
-                            if (checkedId == R.id.chipSunday) {
-                                start = 0;
-                                end = 1;
-                            } else if(checkedId == R.id.chipMonday) {
-                                start = 2;
-                                end = 3;
-                            } else if (checkedId == R.id.chipTuesday) {
-                                start = 4;
-                                end = 5;
-                            } else if (checkedId == R.id.chipWednesday) {
-                                start = 6;
-                                end = 7;
-                            } else if (checkedId == R.id.chipThursday) {
-                                start = 8;
-                                end = 9;
-                            } else if (checkedId == R.id.chipFriday) {
-                                start = 10;
-                                end = 11;
-                            } else if (checkedId == R.id.chipSaturday) {
-                                start = 12;
-                                end = 13;
-                            }
-                            spannableString.setSpan(new ForegroundColorSpan(color), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                        daysOfWeek.setText(spannableString);
-                        firstScheduleBtn.setText(firstScheduleBtnTime);
-                        firstScheduleSwitch.setChecked(true);
-                        firstScheduleBtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.THEMECOLOR)));
-                        firstScheduleBtn.setVisibility(View.VISIBLE);
-
-
                     }
                 });
             }
         });
     }
 
-    private void scheduleTask(int dayOfWeek, int hourOfDay, int minute) {
+    private void deleteScheduleFromScreenAndDatabase(Button button) {
+        button.setVisibility(View.GONE);
+
+        if (button == firstScheduleBtn) {
+            databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child("firstScheduleBtn").removeValue();
+            deleteScheduledTasks();
+        } else if (button == secondScheduleBtn) {
+            databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child("secondScheduleBtn").removeValue();
+            deleteScheduledTasks();
+        } else if (button == thirdScheduleBtn) {
+            databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child("thirdScheduleBtn").removeValue();
+            deleteScheduledTasks();
+        }
+    }
+
+    private void deleteSchedule(){
+        firstScheduleBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showDeleteConfirmationDialog(firstScheduleBtn);
+                return true;
+            }
+        });
+        secondScheduleBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showDeleteConfirmationDialog(secondScheduleBtn);
+                return true;
+            }
+        });
+        thirdScheduleBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showDeleteConfirmationDialog(thirdScheduleBtn);
+                return true;
+            }
+        });
+    }
+
+    private void showDeleteConfirmationDialog(Button button) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Schedule")
+                .setMessage("Are you sure you want to delete this schedule?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteScheduleFromScreenAndDatabase(button);
+                        makeNotification("Schedule Deleted", R.drawable.icon_schedule_deleted);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    public void saveAppPreferencesScheduleScreen(String devicePath, String time, String daysOfWeekSelected, Integer btnColor, Integer btnVisibility, Integer btnIcon) {
+        databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child(devicePath).child("Time").setValue(time);
+        databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child(devicePath).child("Days of Week").setValue(daysOfWeekSelected);
+        databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child(devicePath).child("Color").setValue(btnColor);
+        databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child(devicePath).child("Btn Visibility").setValue(btnVisibility);
+        databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child(devicePath).child("Btn Icon").setValue(btnIcon);
+    }
+
+    public void restoreAppPreferencesScheduleScreen(Button button, TextView daysOfWeekIndicator, String devicePath) {
+        databaseReference.child("Users").child(uid).child("App Preferences - Schedule Screen").child(devicePath).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (getActivity() != null && isAdded()) { // Check if fragment is attached to an activity
+                    if (snapshot.exists()) {
+                        String time = snapshot.child("Time").getValue(String.class);
+                        if (time != null) {
+                            button.setText(time);
+                        }
+
+                        Integer btnIcon = snapshot.child("Btn Icon").getValue(Integer.class);
+                        if (btnIcon != null) {
+                            if (btnIcon == 0) {
+                                button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_open, 0);
+                            } else if (btnIcon == 1) {
+                                button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.rs_close, 0);
+                            }
+                        }
+
+                        String daysOfWeekSelected = snapshot.child("Days of Week").getValue(String.class);
+                        if (daysOfWeekSelected != null) {
+                            daysOfWeekIndicator.setText(daysOfWeekSelected);
+                        }
+
+                        Integer btnColor = snapshot.child("Color").getValue(Integer.class);
+                        if (btnColor != null) {
+                            if (btnColor == 0) {
+                                button.setBackgroundTintList(ColorStateList.valueOf(requireContext().getResources().getColor(R.color.THEMECOLOR)));
+                            }
+                        }
+
+                        Integer btnVisibility = snapshot.child("Btn Visibility").getValue(Integer.class);
+                        if (btnVisibility != null) {
+                            if (btnVisibility == 0) {
+                                button.setVisibility(View.VISIBLE);
+                            } else if (btnVisibility == 1) {
+                                button.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void scheduleTask(int dayOfWeek, int hourOfDay, int minute, boolean isOpenFully) {
         Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                // Activate your function here
-                // This code will be executed at the specified day and time
-                // Execute the function or perform any desired action
-                openFullyScheduledCommand();
+                // Execute the appropriate command
+                executeCommandBasedOnChipSelection(isOpenFully);
             }
-        }, calculateDelay(dayOfWeek, hourOfDay, minute));
+        };
+        timer.schedule(timerTask, calculateDelay(dayOfWeek, hourOfDay, minute));
+
+        // Add the scheduled task to the list
+        scheduledTasks.add(timerTask);
     }
+
+    private void deleteScheduledTasks() {
+        // Iterate through the list of scheduled tasks and cancel each one
+        for (TimerTask task : scheduledTasks) {
+            task.cancel();
+        }
+        // Clear the list of scheduled tasks
+        scheduledTasks.clear();
+    }
+
     private long calculateDelay(int dayOfWeek, int hourOfDay, int minute) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
@@ -373,6 +726,41 @@ public class ScheduleFragment extends Fragment {
             delay += TimeUnit.DAYS.toMillis(7);
         }
         return delay;
+    }
+
+    public void makeNotification(String contentText, int iconResourceId) {
+        String channelID = "CHANNEL_ID_NOTIFICATION";
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(requireContext(), channelID);
+        builder.setSmallIcon(iconResourceId)
+                .setContentTitle("SyncShade")
+                .setContentText(contentText)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Intent intent = new Intent(requireContext(), HomeFragment.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("data", "Some value to be passed here");
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(requireContext(),
+                0, intent, PendingIntent.FLAG_MUTABLE);
+        builder.setContentIntent(pendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel =
+                    notificationManager.getNotificationChannel(channelID);
+            if (notificationChannel == null) {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                notificationChannel = new NotificationChannel(channelID,
+                        "Some description", importance);
+                notificationChannel.setLightColor(Color.GREEN);
+                notificationChannel.enableVibration(true);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+        notificationManager.notify(0, builder.build());
     }
 
 }
