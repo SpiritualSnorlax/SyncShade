@@ -85,14 +85,18 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <CheckBox
+    <TextView
         android:id="@+id/rememberMe"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_width="128dp"
+        android:layout_height="23dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
+        android:button="@drawable/custom_checkbox"
+        android:drawableLeft="@drawable/custom_checkbox"
+        android:drawablePadding="5dp"
         android:text="Remember Me"
-        android:buttonTint="#126A9B"
+        android:onClick="rememberMe"
+        android:paddingTop="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password" />
 

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -148,9 +149,10 @@ public class AccountFragment extends Fragment {
         return rootView;
     }
     private void changePassword() {
-        new AlertDialog.Builder(requireContext())
+        String message = "Are you sure you want to change your password?";
+        new AlertDialog.Builder(requireContext(), R.style.CustomAlertDialogTheme)
                 .setTitle("Change Password")
-                .setMessage("Are you sure you want to change your password?")
+                .setMessage(Html.fromHtml("<font color='#FFFFFF'>"+message+"</font>"))
                 .setPositiveButton("Change Password", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -185,9 +187,10 @@ public class AccountFragment extends Fragment {
                 .show();
     }
     private void showDeleteConfirmationDialog() {
-        new AlertDialog.Builder(requireContext())
+        String message = "Are you sure you want to delete this account?";
+        new AlertDialog.Builder(requireContext(), R.style.CustomAlertDialogTheme)
                 .setTitle("Account Deletion")
-                .setMessage("Are you sure you want to delete this account?")
+                .setMessage(Html.fromHtml("<font color='#FFFFFF'>"+message+"</font>"))
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -200,6 +203,7 @@ public class AccountFragment extends Fragment {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
                                                 // User account has been successfully deleted
+                                                makeNotification("Your account has been deleted", R.drawable.icon_notification);
                                                 Toast.makeText(requireContext(), "Account deleted successfully", Toast.LENGTH_SHORT).show();
                                                 // Optionally, you can navigate the user to another screen or perform other actions
                                             } else {

@@ -16,13 +16,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -131,47 +135,120 @@ public class ScheduleFragment extends Fragment {
     }
 
     public void openFullyScheduledCommand() {
-        databaseReference.child("Users").child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int appRequestValue = 1;
-                int ocFullyValue = 1;
-                String ocRollerShadeValue = "Opened";
+            databaseReference.child("Roller Shade Control").child("State").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+                    if (!isAdded()) {
+                        Log.d("TAG", "Function is going into the !isAdded() conditional block");
+                        return;
+                    }
+                    // Check if the State value is 1
+                    Float stateValue = stateSnapshot.getValue(Float.class);
+                    if (stateValue == 1) {
+                        // Do not run the command if the State value is 1
+                        makeNotification("The roller shade is already fully open. Scheduled command has been canceled.", R.drawable.icon_notification);
+                        return;
+                    }
 
-                databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
-                databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
-                databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
-                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Opened - Fully");
-                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
-            }
+                    // If State value is not 1, check App Request value
+                    databaseReference.child("Roller Shade Control").child("App Request").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot appRequestSnapshot) {
+                            if (!isAdded()) {
+                                return;
+                            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                            String appRequestStringValue = appRequestSnapshot.getValue(String.class);
+                            if (!"0".equals(appRequestStringValue)) {
+                                // Do not run the command if the App Request value is 1
+                                makeNotification("A command is already in progress. Please wait until it is completed.", R.drawable.icon_notification);
+                                return;
+                            }
 
-            }
-        });
-    }
+                            // If State and App Request values are acceptable, execute the command
+                            String appRequestValue = "1";
+                            int ocFullyValue = 1;
+                            String ocRollerShadeValue = "Opened";
+
+                            databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
+                            databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
+                            databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
+
+                            makeNotification("Scheduled command to fully open roller shade has been completed", R.drawable.rs_open);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError appRequestError) {
+                            // Handle onCancelled event for App Request
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError appRequestError) {
+                    // Handle onCancelled event for App Request
+                }
+            });
+        }
+
 
     public void closeFullyScheduledCommand() {
-        databaseReference.child("Users").child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int appRequestValue = 1;
-                int ocFullyValue = 0;
-                String ocRollerShadeValue = "Closed";
+            databaseReference.child("Roller Shade Control").child("State").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+                    if (!isAdded()) {
+                        return;
+                    }
 
-                databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
-                databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
-                databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
-                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Closed - Fully");
-                databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(0);
-            }
+                    // Check if the State value is 0
+                    Float stateValue = stateSnapshot.getValue(Float.class);
+                    if (stateValue == 0) {
+                        // Do not run the command if the State value is 0
+                        makeNotification("The roller shade is already fully close. Scheduled command has been canceled.", R.drawable.icon_notification);
+                        return;
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                    // If State value is not 0, check App Request value
+                    databaseReference.child("Roller Shade Control").child("App Request").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot appRequestSnapshot) {
 
-            }
-        });
+                            if (!isAdded()) {
+                                return;
+                            }
+
+                            String appRequestStringValue = appRequestSnapshot.getValue(String.class);
+                            if (!"0".equals(appRequestStringValue)) {
+                                // Do not run the command if the App Request value is not 0
+                                makeNotification("A command is already in progress. Please wait until it is completed.", R.drawable.icon_notification);
+                                return;
+                            }
+                            String appRequestValue = "1";
+                            int ocFullyValue = 0;
+                            String ocRollerShadeValue = "Closed";
+
+                            databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
+                            databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
+                            databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
+
+                            makeNotification("Scheduled command to fully close roller shade has been completed", R.drawable.rs_close);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError appRequestError) {
+                            // Handle onCancelled event for App Request
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError appRequestError) {
+                    // Handle onCancelled event for App Request
+                }
+            });
     }
 
     private void executeCommandBasedOnChipSelection(boolean isOpenFully) {
@@ -181,8 +258,6 @@ public class ScheduleFragment extends Fragment {
             closeFullyScheduledCommand();
         }
     }
-
-
 
     public void scheduleCommands() {
         addScheduleBtn.setOnClickListener(new View.OnClickListener() {
@@ -567,6 +642,12 @@ public class ScheduleFragment extends Fragment {
                         }
                     }
                 });
+                cancelScheduleBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
             }
         });
     }
@@ -611,9 +692,10 @@ public class ScheduleFragment extends Fragment {
     }
 
     private void showDeleteConfirmationDialog(Button button) {
-        new AlertDialog.Builder(requireContext())
+        String message = "Are you sure you want to delete this schedule?";
+        new AlertDialog.Builder(requireContext(), R.style.CustomAlertDialogTheme)
                 .setTitle("Delete Schedule")
-                .setMessage("Are you sure you want to delete this schedule?")
+                .setMessage(Html.fromHtml("<font color='#FFFFFF'>"+message+"</font>"))
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

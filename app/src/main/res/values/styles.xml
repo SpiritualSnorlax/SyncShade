@@ -19,4 +19,13 @@
         <item name="colorSecondary">#126A9B</item>
     </style>
 
+    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Customize button colors -->
+        <item name="android:background">#126A9B</item> <!-- Color of the positive button -->
+        <item name="colorAccent">#126A9B</item> <!-- Color of the negative button -->
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColorSecondary">#FFFFFF</item> <!-- Color of message text -->
+        <item name="color">#FFFFFF</item>
+    </style>
+
 </resources>

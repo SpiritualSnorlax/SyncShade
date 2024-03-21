@@ -37,7 +37,7 @@ public class Login extends AppCompatActivity {
 
     protected TextInputEditText etEmail;
     protected TextInputEditText etPassword;
-    protected CheckBox rememberMe;
+    protected TextView rememberMe;
     protected TextView forgotPassword;
     protected Button signInBtn;
     protected TextView noAccountBtn;
@@ -76,18 +76,18 @@ public class Login extends AppCompatActivity {
                 passwordField = etPassword.getText().toString();
 
                 if (emailField.isEmpty() || passwordField.isEmpty()) {
-                    Toast.makeText(Login.this, "Please enter your username and password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Please enter your email address and password", Toast.LENGTH_SHORT).show();
                 } else {
                     mAuth.signInWithEmailAndPassword(emailField, passwordField).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()) {
-                                Toast.makeText(Login.this, "Welcome User", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Welcome SyncShade User", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(Login.this, BottomNavigation.class);
                                 startActivity(intent);
 
                             } else {
-                                Toast.makeText(Login.this, "Incorrect Email & Password", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Wrong email address and password", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -97,21 +97,24 @@ public class Login extends AppCompatActivity {
     }
 
     public void rememberMe() {
-        rememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        rememberMe.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
+                // Toggle the selected state
+                v.setSelected(!v.isSelected());
 
-                if(buttonView.isChecked()) {
-                    SharedPreferences preferences = getSharedPreferences("Checkbox", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("remember", "true");
-                    editor.apply();
-                } else if (!buttonView.isChecked()) {
-                    SharedPreferences preferences = getSharedPreferences("Checkbox", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("remember", "false");
-                    editor.apply();
+                // Set the appropriate drawable based on the selected state
+                if (v.isSelected()) {
+                    rememberMe.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_checkbox_checked, 0, 0, 0);
+                } else {
+                    rememberMe.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_checkbox_unchecked, 0, 0, 0);
                 }
+
+                // Save the state in SharedPreferences
+                SharedPreferences preferences = getSharedPreferences("Checkbox", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("remember", String.valueOf(v.isSelected()));
+                editor.apply();
             }
         });
     }
@@ -147,7 +150,7 @@ public class Login extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     makeNotification("Check your email for reset password instructions");
-                                    Toast.makeText(Login.this, "Password Reset Email Sent", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Login.this, "Password reset email sent", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 } else {
                                     makeNotification("Password reset email could not be sent");
@@ -186,7 +189,7 @@ public class Login extends AppCompatActivity {
         String channelID = "CHANNEL_ID_NOTIFICATION";
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(getApplicationContext(), channelID);
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground)
+        builder.setSmallIcon(R.drawable.icon_notification)
                 .setContentTitle("SyncShade")
                 .setContentText(contentText)
                 .setAutoCancel(true)

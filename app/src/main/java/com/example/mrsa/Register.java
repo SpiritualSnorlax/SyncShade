@@ -4,8 +4,13 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -97,6 +102,8 @@ public class Register extends AppCompatActivity {
                     Toast.makeText(Register.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 } else if (!isValidPassword(passwordField)) {
                     Toast.makeText(Register.this, "Password does not meet requirements", Toast.LENGTH_SHORT).show();
+                } else if (!confirmPasswordField.equals(passwordField)) {
+                    Toast.makeText(Register.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 } else {
                     mAuth.createUserWithEmailAndPassword(emailField, passwordField).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -108,12 +115,13 @@ public class Register extends AppCompatActivity {
                                 databaseReference.child("Users").child(uid).child("email").setValue(emailField);
                                 databaseReference.child("Users").child(uid).child("password").setValue(hashedPassword);
                                 databaseReference.child("Users").child(uid).child("phone").setValue(phoneField);
-                                Toast.makeText(Register.this, "Account Creation Successful", Toast.LENGTH_SHORT).show();
+                                makeNotification("Account created successfully");
+                                Toast.makeText(Register.this, "Account created successfully", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(Register.this, Login.class));
                                 finish();
 
                             } else {
-                                Toast.makeText(Register.this, "Account Creation Failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Register.this, "Account creation failed, please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -266,5 +274,40 @@ public class Register extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public void makeNotification(String contentText) {
+        String channelID = "CHANNEL_ID_NOTIFICATION";
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(getApplicationContext(), channelID);
+        builder.setSmallIcon(R.drawable.icon_notification)
+                .setContentTitle("SyncShade")
+                .setContentText(contentText)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Intent intent = new Intent(getApplicationContext(), Login.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("data", "Some value to be passed here");
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                0, intent, PendingIntent.FLAG_MUTABLE);
+        builder.setContentIntent(pendingIntent);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel =
+                    notificationManager.getNotificationChannel(channelID);
+            if (notificationChannel == null) {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                notificationChannel = new NotificationChannel(channelID,
+                        "Some description", importance);
+                notificationChannel.setLightColor(Color.GREEN);
+                notificationChannel.enableVibration(true);
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+        notificationManager.notify(0, builder.build());
     }
 }

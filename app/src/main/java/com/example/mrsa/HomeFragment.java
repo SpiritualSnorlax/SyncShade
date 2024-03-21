@@ -25,6 +25,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -138,6 +139,8 @@ public class HomeFragment extends Fragment {
 
         addDeviceBtn();
         toCommandScreen();
+        updatePositionIndicator(firstPositionIndicator);
+        updateButtonColor(firstGridBtn);
         restoreAppPreferencesHomeScreen(firstGridBtn, firstPositionIndicator, "firstDeviceBtn");
         restoreAppPreferencesHomeScreen(secondGridBtn, secondPositionIndicator, "secondDeviceBtn");
         restoreAppPreferencesHomeScreen(thirdGridBtn, thirdPositionIndicator, "thirdDeviceBtn");
@@ -149,10 +152,9 @@ public class HomeFragment extends Fragment {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_send_command, null);
         Button openBtn = dialogView.findViewById(R.id.openBtn);
         Button closeBtn = dialogView.findViewById(R.id.closeBtn);
-        SeekBar seekBar = dialogView.findViewById(R.id.seekBar);
         Chip decreaseBtn = dialogView.findViewById(R.id.decreaseBtn);
         Chip increaseBtn = dialogView.findViewById(R.id.increaseBtn);
-        EditText seekBarValue = dialogView.findViewById(R.id.seekBarValue);
+        EditText percentOCValue = dialogView.findViewById(R.id.seekBarValue);
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -160,160 +162,342 @@ public class HomeFragment extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        openFullyCommand(openBtn, seekBar, seekBarValue);
-        closeFullyCommand(closeBtn, seekBar, seekBarValue);
-        closeByTenPercent(decreaseBtn, seekBar, seekBarValue);
-        openByTenPercent(increaseBtn, seekBar, seekBarValue);
-        restoreSendCommandDialogPreferences(seekBar, seekBarValue);
+        openFullyCommand(openBtn);
+        closeFullyCommand(closeBtn);
+        closeByTenPercent(decreaseBtn);
+        openByTenPercent(increaseBtn);
+        updatePercentOCValue(percentOCValue);
     }
 
-    public void mimicMainRollerShade(String device) {
-        databaseReference.child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
+    public void openFullyCommand(Button openBtn) {
+            openBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    databaseReference.child("Roller Shade Control").child("State").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+                            if (!isAdded()) {
+                                return;
+                            }
+
+                            // Check if the State value is 1
+                            Float stateValue = stateSnapshot.getValue(Float.class);
+                            if (stateValue == 1) {
+                                // Do not run the command if the State value is 1
+                                makeNotification("The roller shade is already fully open.", R.drawable.icon_notification);
+                                return;
+                            }
+
+                            // If State value is not 1, check App Request value
+                            databaseReference.child("Roller Shade Control").child("App Request").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot appRequestSnapshot) {
+                                    if (!isAdded()) {
+                                        return;
+                                    }
+
+                                    String appRequestStringValue = appRequestSnapshot.getValue(String.class);
+                                    if (!"0".equals(appRequestStringValue)) {
+                                        // Do not run the command if the App Request value is 1
+                                        makeNotification("A command is already in progress. Please wait until it is completed.", R.drawable.icon_notification);
+                                        return;
+                                    }
+
+                                    // If State and App Request values are acceptable, execute the command
+                                    String appRequestValue = "1";
+                                    int ocFullyValue = 1;
+                                    String ocRollerShadeValue = "Opened";
+
+                                    databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
+                                    databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
+                                    databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
+
+                                    makeNotification("Roller Shade - Opened Fully", R.drawable.rs_open);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError appRequestError) {
+                                    // Handle onCancelled event for App Request
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError stateError) {
+                            // Handle onCancelled event for State
+                        }
+                    });
+                }
+            });
+        }
+
+    public void closeFullyCommand(Button closeBtn) {
+            closeBtn.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    databaseReference.child("Roller Shade Control").child("State").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+
+                            if (!isAdded()) {
+                                return;
+                            }
+
+                            // Check if the State value is 0
+                            Float stateValue = stateSnapshot.getValue(Float.class);
+                            if (stateValue == 0) {
+                                // Do not run the command if the State value is 0
+                                makeNotification("The roller shade is already fully close.", R.drawable.icon_notification);
+                                return;
+                            }
+
+                            // If State value is not 0, check App Request value
+                            databaseReference.child("Roller Shade Control").child("App Request").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot appRequestSnapshot) {
+                                    if (!isAdded()) {
+                                        return;
+                                    }
+
+                                    String appRequestStringValue = appRequestSnapshot.getValue(String.class);
+                                    if (!"0".equals(appRequestStringValue)) {
+                                        // Do not run the command if the App Request value is not 0
+                                        makeNotification("A command is already in progress. Please wait until it is completed.", R.drawable.icon_notification);
+                                        return;
+                                    }
+                                    String appRequestValue = "1";
+                                    int ocFullyValue = 0;
+                                    String ocRollerShadeValue = "Closed";
+
+                                    databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
+                                    databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
+                                    databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
+
+                                    makeNotification("Roller Shade - Closed Fully", R.drawable.rs_close);
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError appRequestError) {
+                                    // Handle onCancelled event for App Request
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError stateError) {
+                            // Handle onCancelled event for State
+                        }
+                    });
+                }
+            });
+        }
+
+    public void closeByTenPercent(Button decreaseBtn) {
+            decreaseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Retrieve the current value of the State from the database
+                    databaseReference.child("Roller Shade Control").child("State").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+                            if (!isAdded()) {
+                                return;
+                            }
+
+                            // Get the value of State
+                            Float stateValue = stateSnapshot.getValue(Float.class);
+                            // Check if the state is already fully closed
+                            if (stateValue == 0) {
+                                makeNotification("The roller shade is already fully closed.", R.drawable.icon_notification);
+                                return;
+                            }
+
+                            // Check if App Request value is acceptable
+                            databaseReference.child("Roller Shade Control").child("App Request").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot appRequestSnapshot) {
+                                    if (!isAdded()) {
+                                        return;
+                                    }
+
+                                    String appRequestStringValue = appRequestSnapshot.getValue(String.class);
+                                    if (!"0".equals(appRequestStringValue)) {
+                                        makeNotification("A command is already in progress. Please wait until it is completed.", R.drawable.icon_notification);
+                                        return;
+                                    }
+
+                                    databaseReference.child("Roller Shade Control").child("App Request").setValue("Down");
+
+                                    makeNotification("Roller Shade - Closed By 10%", R.drawable.rs_close);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError appRequestError) {
+                                    // Handle onCancelled event for App Request
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError stateError) {
+                            // Handle onCancelled event for State
+                        }
+                    });
+                }
+            });
+        }
+
+    public void openByTenPercent(Button increaseBtn) {
+            increaseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Check if State value is acceptable
+                    databaseReference.child("Roller Shade Control").child("State").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+                            if (!isAdded()) {
+                                return;
+                            }
+
+                            // Get the value of State
+                            Float stateValue = stateSnapshot.getValue(Float.class);
+                            // Check if the state is already fully closed
+                            if (stateValue == 1) {
+                                makeNotification("The roller shade is already fully open.", R.drawable.icon_notification);
+                                return;
+                            }
+
+                            // Check if App Request value is acceptable
+                            databaseReference.child("Roller Shade Control").child("App Request").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot appRequestSnapshot) {
+                                    if (!isAdded()) {
+                                        return;
+                                    }
+
+                                    String appRequestStringValue = appRequestSnapshot.getValue(String.class);
+                                    if (!"0".equals(appRequestStringValue)) {
+                                        makeNotification("A command is already in progress. Please wait until it is completed.", R.drawable.icon_notification);
+                                        return;
+                                    }
+
+                                    // Continue with the command execution
+                                    databaseReference.child("Roller Shade Control").child("App Request").setValue("Up");
+
+                                    makeNotification("Roller Shade - Opened By 10%", R.drawable.rs_open);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError appRequestError) {
+                                    // Handle onCancelled event for App Request
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError stateError) {
+                            // Handle onCancelled event for State
+                        }
+                    });
+                }
+            });
+        }
+
+    public void updatePercentOCValue(EditText percentOCValue) {
+        databaseReference.child("Roller Shade Control").child("State").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Integer appRequestValue = snapshot.child("App Request").getValue(Integer.class);
-                Integer ocFullyValue = snapshot.child("Open-Close Fully").getValue(Integer.class);
-                String ocRollerShadeValue = snapshot.child("Open-Close Roller Shade").getValue(String.class);
-
-                databaseReference.child("Users").child(uid).child(device).child("App Request").setValue(appRequestValue);
-                databaseReference.child("Users").child(uid).child(device).child("Open-Close Fully").setValue(ocFullyValue);
-                databaseReference.child("Users").child(uid).child(device).child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-    public void openFullyCommand(Button openBtn, SeekBar seekBar, EditText seekBarValue) {
-        openBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                databaseReference.child("Users").child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        int appRequestValue = 1;
-                        int ocFullyValue = 1;
-                        String ocRollerShadeValue = "Opened";
-
-                        databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
-                        databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
-                        databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
-
-                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
-                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Open - Fully");
-
-                        seekBar.setProgress(10);
-                        seekBarValue.setText("100%");
-
-                        String seekBarTextValue = seekBarValue.getText().toString();
-                        Integer seekBarPositionValue = seekBar.getProgress();
-
-                        saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
-                        makeNotification("Roller Shade - Opened Fully", R.drawable.rs_open);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-        });
-
-    }
-
-    public void closeFullyCommand(Button closeBtn, SeekBar seekBar, EditText seekBarValue) {
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                databaseReference.child("Users").child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        int appRequestValue = 1;
-                        int ocFullyValue = 0;
-                        String ocRollerShadeValue = "Closed";
-
-                        databaseReference.child("Roller Shade Control").child("App Request").setValue(appRequestValue);
-                        databaseReference.child("Roller Shade Control").child("Open-Close Fully").setValue(ocFullyValue);
-                        databaseReference.child("Roller Shade Control").child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
-
-                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(0);
-                        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Closed - Fully");
-
-                        seekBar.setProgress(0);
-                        seekBarValue.setText("0%");
-
-                        String seekBarTextValue = seekBarValue.getText().toString();
-                        Integer seekBarPositionValue = seekBar.getProgress();
-
-                        saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
-                        makeNotification("Roller Shade - Closed Fully", R.drawable.rs_close);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-            }
-        });
-    }
-
-    public void closeByTenPercent(Button decreaseBtn, SeekBar seekBar, EditText seekBarValue) {
-        decreaseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                seekBar.setProgress(seekBar.getProgress() - 1);
-                seekBarValue.setText(seekBar.getProgress() + "0%");
-
-                String seekBarTextValue = seekBarValue.getText().toString();
-                Integer seekBarPositionValue = seekBar.getProgress();
-
-                if (seekBarPositionValue == 0) {
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Closed - Fully");
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(0);
-
-                } else {
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Open - " + seekBarTextValue);
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
+            public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+                if (!isAdded()) {
+                    return;
                 }
 
-                databaseReference.child("Roller Shade Control").child("App Request").setValue("Down");
-                saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
-                makeNotification("Roller Shade - Closed By 10%", R.drawable.rs_close);
+                // Check if the State value is available
+                Float stateValue = stateSnapshot.getValue(Float.class);
+                if (stateValue != null) {
+                    // Convert state value to percentage format
+                    int statePercentage = (int) (stateValue * 100);
 
-            }
-        });
-    }
-
-    public void openByTenPercent(Button increaseBtn, SeekBar seekBar, EditText seekBarValue) {
-        increaseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                seekBar.setProgress(seekBar.getProgress() + 1);
-                seekBarValue.setText(seekBar.getProgress() + "0%");
-
-                String seekBarTextValue = seekBarValue.getText().toString();
-                Integer seekBarPositionValue = seekBar.getProgress();
-
-                if (seekBarPositionValue == 10) {
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Opened - Fully");
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
-                } else {
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Position").setValue("Position: Open - " + seekBarTextValue);
-                    databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child("firstDeviceBtn").child("Color").setValue(1);
+                    // Set the percentage value to the percentOCValue EditText
+                    percentOCValue.setText(statePercentage + "%");
                 }
-                databaseReference.child("Roller Shade Control").child("App Request").setValue("Up");
-                saveSendCommandDialogPreferences(seekBarTextValue, seekBarPositionValue);
-                makeNotification("Roller Shade - Opened By 10%", R.drawable.rs_open);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError stateError) {
+                // Handle onCancelled event for State
             }
         });
     }
+
+    public void updatePositionIndicator(TextView positionIndicator) {
+        databaseReference.child("Roller Shade Control").child("State").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+
+                if (!isAdded()) {
+                    return;
+                }
+
+                // Get the value of State
+                Float stateValue = stateSnapshot.getValue(Float.class);
+
+                // Check if the state value is available
+                if (stateValue != null) {
+                    String positionText;
+                    // Convert state value to percentage format
+                    int statePercentage = (int) (stateValue * 100);
+
+                    // Check if the state is fully closed
+                    if (stateValue == 0) {
+                        positionText = "Position: Closed - Fully";
+                    } else if (stateValue == 1) {
+                        positionText = "Position: Open - Fully";
+                    } else {
+                        positionText = "Position: Open - " + statePercentage + "%";
+                    }
+
+                    // Set the position text to the firstPositionIndicator TextView
+                    positionIndicator.setText(positionText);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError stateError) {
+                // Handle onCancelled event for State
+            }
+        });
+    }
+
+    public void updateButtonColor(Button button) {
+        databaseReference.child("Roller Shade Control").child("State").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot stateSnapshot) {
+                if (!isAdded()) {
+                    return;
+                }
+
+                // Get the value of State
+                Float stateValue = stateSnapshot.getValue(Float.class);
+
+                // Check if the state is fully closed
+                if (stateValue == 0) {
+                    button.setBackgroundTintList(ColorStateList.valueOf(requireContext().getResources().getColor(R.color.THEMECOLOR)));
+                } else {
+                    button.setBackgroundTintList(ColorStateList.valueOf(requireContext().getResources().getColor(R.color.GREEN)));
+                }
+            }
+
+                @Override
+                public void onCancelled (@NonNull DatabaseError stateError){
+                    // Handle onCancelled event for State
+                }
+            });
+    }
+
+
+
 
     public void restoreAppPreferencesHomeScreen(Button button, TextView positionIndicator, String devicePath) {
         databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).addValueEventListener(new ValueEventListener() {
@@ -337,20 +521,6 @@ public class HomeFragment extends Fragment {
                                 button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_kitchen, 0);
                             } else if (selectedIcon == 4) {
                                 button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.large_icon_bathroom, 0);
-                            }
-                        }
-
-                        String PositionText = snapshot.child("Position").getValue(String.class);
-                        if (PositionText != null) {
-                            positionIndicator.setText(PositionText);
-                        }
-
-                        Integer btnColor = snapshot.child("Color").getValue(Integer.class);
-                        if (btnColor != null) {
-                            if (btnColor == 0) {
-                                button.setBackgroundTintList(ColorStateList.valueOf(requireContext().getResources().getColor(R.color.THEMECOLOR)));
-                            } else if (btnColor == 1) {
-                                button.setBackgroundTintList(ColorStateList.valueOf(requireContext().getResources().getColor(R.color.GREEN)));
                             }
                         }
 
@@ -381,33 +551,13 @@ public class HomeFragment extends Fragment {
         databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Visibility").setValue(btnVisibility);
     }
 
-    public void saveSendCommandDialogPreferences(String seekBarTextValue, Integer seekBarPositionValue) {
-        databaseReference.child("Users").child(uid).child("App Preferences - Command Dialog").child("SB Text Value").setValue(seekBarTextValue);
-        databaseReference.child("Users").child(uid).child("App Preferences - Command Dialog").child("SB Position Value").setValue(seekBarPositionValue);
-    }
-
-    public void restoreSendCommandDialogPreferences(SeekBar seekBar, EditText seekBarValue) {
-        databaseReference.child("Users").child(uid).child("App Preferences - Command Dialog").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String seekBarTextValue = snapshot.child("SB Text Value").getValue(String.class);
-                    Integer seekBarPositionValue = snapshot.child("SB Position Value").getValue(Integer.class);
-
-                    if (seekBarTextValue != null && seekBarPositionValue != null) {
-                        seekBarValue.setText(seekBarTextValue);
-                        seekBar.setProgress(seekBarPositionValue);
-                    }
-
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
+//    public void saveAppPreferencesHomeScreen(String devicePath, String roomName, Integer iconSelected, String positionText, Integer btnColor, Integer btnVisibility ) {
+//        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Room Name").setValue(roomName);
+//        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Selected Icon").setValue(iconSelected);
+//        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Position").setValue(positionText);
+//        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Color").setValue(btnColor);
+//        databaseReference.child("Users").child(uid).child("App Preferences - Home Screen").child(devicePath).child("Visibility").setValue(btnVisibility);
+//    }
 
     public void addDeviceBtn() {
         addDeviceBtn.setOnClickListener(new View.OnClickListener() {
@@ -645,6 +795,9 @@ public class HomeFragment extends Fragment {
                             String databasePath = "fourthDeviceBtn";
                             saveAppPreferencesHomeScreen(databasePath, roomName, fourthSelectedIcon, fourthPositionText, fourthBtnColor, fourthBtnVisibility);
                             dialog.dismiss();
+                        } else if (firstGridBtn.getVisibility() == View.VISIBLE && secondGridBtn.getVisibility() == View.VISIBLE && thirdGridBtn.getVisibility() == View.VISIBLE && fourthGridBtn.getVisibility() == View.VISIBLE) {
+                            makeNotification("Max devices reached. Please delete one or more devices before adding another", R.drawable.icon_notification);
+                            Toast.makeText(requireContext(), "No more devices can be added", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -768,9 +921,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void showDeleteConfirmationDialog(Button button) {
-        new AlertDialog.Builder(requireContext())
+        String message = "Are you sure you want to delete this device?";
+        new AlertDialog.Builder(requireContext(), R.style.CustomAlertDialogTheme)
                 .setTitle("Delete Device")
-                .setMessage("Are you sure you want to delete this device?")
+                .setMessage(Html.fromHtml("<font color='#FFFFFF'>"+message+"</font>"))
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -780,4 +934,23 @@ public class HomeFragment extends Fragment {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+    //    public void mimicMainRollerShade(String device) {
+//        databaseReference.child("Roller Shade Control").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                Integer appRequestValue = snapshot.child("App Request").getValue(Integer.class);
+//                Integer ocFullyValue = snapshot.child("Open-Close Fully").getValue(Integer.class);
+//                String ocRollerShadeValue = snapshot.child("Open-Close Roller Shade").getValue(String.class);
+//
+//                databaseReference.child("Users").child(uid).child(device).child("App Request").setValue(appRequestValue);
+//                databaseReference.child("Users").child(uid).child(device).child("Open-Close Fully").setValue(ocFullyValue);
+//                databaseReference.child("Users").child(uid).child(device).child("Open-Close Roller Shade").setValue(ocRollerShadeValue);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
 }
