@@ -85,7 +85,7 @@ public class HomeFragment extends Fragment {
     int secondSelectedIcon;
     int thirdSelectedIcon;
     int fourthSelectedIcon;
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mrsa-test-services-default-rtdb.firebaseio.com/");
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://syncshade-2f602-default-rtdb.firebaseio.com/");
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = mAuth.getCurrentUser();
     String uid = currentUser.getUid();

@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "875410775547",
-    "firebase_url": "https://mrsa-test-services-default-rtdb.firebaseio.com",
-    "project_id": "mrsa-test-services",
-    "storage_bucket": "mrsa-test-services.appspot.com"
+    "project_number": "1526994549",
+    "firebase_url": "https://syncshade-2f602-default-rtdb.firebaseio.com",
+    "project_id": "syncshade-2f602",
+    "storage_bucket": "syncshade-2f602.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:875410775547:android:74a87e28eb910ec173ff5e",
+        "mobilesdk_app_id": "1:1526994549:android:51108287579df16dc40a3c",
         "android_client_info": {
           "package_name": "com.example.mrsa"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB8hgTtk7kAsHzQxMX-tKFFqPdV4NGG3_I"
+          "current_key": "AIzaSyBOk1ohyx6kwAQnKvb-ldM9xfxpHCij0VQ"
         }
       ],
       "services": {
