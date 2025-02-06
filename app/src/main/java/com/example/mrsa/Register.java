@@ -59,7 +59,7 @@ public class Register extends AppCompatActivity {
     protected TextView yesAccountBtn;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://syncshade-2f602-default-rtdb.firebaseio.com/");
+    /*Insert DatabaseReference*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
