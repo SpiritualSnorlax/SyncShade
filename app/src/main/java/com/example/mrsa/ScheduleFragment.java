@@ -65,7 +65,7 @@ public class ScheduleFragment extends Fragment {
     int selectedHour;
     int selectedMinute;
     private TimePickerDialog timePickerDialog;
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://syncshade-2f602-default-rtdb.firebaseio.com/");
+    /*Insert DatabaseReference*/
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = mAuth.getCurrentUser();
     String uid = currentUser.getUid();
