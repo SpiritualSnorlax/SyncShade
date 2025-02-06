@@ -55,7 +55,7 @@ public class AccountFragment extends Fragment {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser currentUser = mAuth.getCurrentUser();
 
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://syncshade-2f602-default-rtdb.firebaseio.com/");
+    /*Insert DatabaseReference*/
     String uid = currentUser.getUid();
 
     // TODO: Rename and change types of parameters
